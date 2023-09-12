@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">finalproject</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="signIn">SignIn </string>
+    <string name="signUp">SignUp </string>
+    <string name="enter_your_email">Enter your Email</string>
+    <string name="enter_your_pass">Enter your Password</string>
+    <string name="re_enter_your_pass">Re-Enter your Password</string>
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

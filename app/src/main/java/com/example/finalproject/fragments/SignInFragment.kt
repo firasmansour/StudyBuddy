@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.example.finalproject.AppActivity
 import com.example.finalproject.R
 import com.example.finalproject.databinding.FragmentSignInBinding
 import com.example.finalproject.databinding.FragmentSignUpBinding
@@ -79,7 +80,8 @@ class SignInFragment : Fragment() {
     private fun checkUser() {
         val firbaseUser = firebaseAuth.currentUser
         if (firbaseUser != null){
-            navController.navigate(R.id.action_signInFragment_to_homeFragment)
+            startActivity(Intent(requireContext(), AppActivity::class.java))
+            requireActivity().finish()
         }
     }
 
@@ -122,7 +124,8 @@ class SignInFragment : Fragment() {
 
                 }
 
-                navController.navigate(R.id.action_signInFragment_to_homeFragment)
+                startActivity(Intent(requireActivity(),AppActivity::class.java))
+                requireActivity().finish()
 
             }
             .addOnFailureListener{ e->
@@ -133,8 +136,12 @@ class SignInFragment : Fragment() {
     }
     private fun loginUser(email: String, pass: String) {
         firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener {
-            if (it.isSuccessful)
-                navController.navigate(R.id.action_signInFragment_to_homeFragment)
+            if (it.isSuccessful){
+                startActivity(Intent(requireActivity(),AppActivity::class.java))
+                requireActivity().finish()
+
+            }
+
             else
                 Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT).show()
 

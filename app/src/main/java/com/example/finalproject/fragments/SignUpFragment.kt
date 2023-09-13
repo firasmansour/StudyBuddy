@@ -1,5 +1,6 @@
 package com.example.finalproject.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.example.finalproject.AppActivity
 import com.example.finalproject.R
 import com.example.finalproject.databinding.FragmentSignUpBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -35,10 +37,6 @@ class SignUpFragment : Fragment() {
             navController.navigate(R.id.action_signUpFragment_to_signInFragment)
         }
 
-        binding.textViewSignIn.setOnClickListener {
-            navController.navigate(R.id.action_signUpFragment_to_signInFragment)
-        }
-
         binding.signUpBtn.setOnClickListener {
             val email = binding.emailEt.text.toString()
             val pass = binding.passEt.text.toString()
@@ -60,8 +58,10 @@ class SignUpFragment : Fragment() {
 
     private fun registerUser(email: String, pass: String) {
         firebaseauth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener {
-            if (it.isSuccessful)
-                navController.navigate(R.id.action_signUpFragment_to_homeFragment)
+            if (it.isSuccessful){
+                startActivity(Intent(requireActivity(), AppActivity::class.java))
+                requireActivity().finish()
+            }
             else
                 Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT).show()
 

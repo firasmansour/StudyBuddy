@@ -31,20 +31,5 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        firebaseAuth = FirebaseAuth.getInstance()
-        navController = Navigation.findNavController(view)
-
-        checkUser()
-        binding.signOutBtn.setOnClickListener {
-            firebaseAuth.signOut()
-            checkUser()
-        }
-    }
-    private fun checkUser() {
-        val firebaseUser = firebaseAuth.currentUser
-        if (firebaseUser == null){
-            navController.navigate(R.id.action_homeFragment_to_signInFragment)
-        }
     }
 }

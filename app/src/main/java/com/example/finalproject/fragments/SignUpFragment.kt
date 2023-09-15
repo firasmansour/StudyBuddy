@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.finalproject.AppActivity
+import com.example.finalproject.CollectPDataActivity
 import com.example.finalproject.R
 import com.example.finalproject.databinding.FragmentSignUpBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -45,7 +46,12 @@ class SignUpFragment : Fragment() {
             if (email.isNotEmpty() && pass.isNotEmpty() && verifyPass.isNotEmpty()) {
                 if (pass == verifyPass) {
 
-                    registerUser(email, pass)
+                    Intent(requireActivity(), CollectPDataActivity::class.java).also {
+                        it.putExtra("EXTRA_EMAIL",email)
+                        it.putExtra("EXTRA_PASS",pass)
+                        startActivity(it)
+                    }
+                    requireActivity().finish()
 
                 } else {
                     Toast.makeText(context, "Password is not same", Toast.LENGTH_SHORT).show()
@@ -56,17 +62,17 @@ class SignUpFragment : Fragment() {
 
     }
 
-    private fun registerUser(email: String, pass: String) {
-        firebaseauth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener {
-            if (it.isSuccessful){
-                startActivity(Intent(requireActivity(), AppActivity::class.java))
-                requireActivity().finish()
-            }
-            else
-                Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT).show()
-
-        }
-    }
+//    private fun registerUser(email: String, pass: String) {
+//        firebaseauth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener {
+//            if (it.isSuccessful){
+//                startActivity(Intent(requireActivity(), AppActivity::class.java))
+//                requireActivity().finish()
+//            }
+//            else
+//                Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT).show()
+//
+//        }
+//    }
 
 
 

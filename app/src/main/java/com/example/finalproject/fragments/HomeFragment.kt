@@ -51,8 +51,9 @@ class HomeFragment : Fragment() {
             val name = binding.nameEt.text.toString()
             val data = HashMap<String, Any>()
             data["key3"] = name
-            data["key4"] = "value2"
             reference.setValue(data)
+            binding.nameEt.text = null
+
 
         }
 

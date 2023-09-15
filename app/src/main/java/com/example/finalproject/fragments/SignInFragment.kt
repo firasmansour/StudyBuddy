@@ -11,7 +11,9 @@ import android.widget.Toast
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.finalproject.AppActivity
+import com.example.finalproject.CollectPDataActivity
 import com.example.finalproject.R
+import com.example.finalproject.User
 import com.example.finalproject.databinding.FragmentSignInBinding
 import com.example.finalproject.databinding.FragmentSignUpBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -21,12 +23,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class SignInFragment : Fragment() {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var navController: NavController
     private lateinit var binding: FragmentSignInBinding
     private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var dataBaseRef: DatabaseReference
 
     private  companion object{
         private const val RC_SIGN_IN = 100
@@ -47,6 +55,7 @@ class SignInFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
         firebaseAuth = FirebaseAuth.getInstance()
+        dataBaseRef = FirebaseDatabase.getInstance().reference.child("Users")
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
@@ -80,8 +89,28 @@ class SignInFragment : Fragment() {
     private fun checkUser() {
         val firbaseUser = firebaseAuth.currentUser
         if (firbaseUser != null){
-            startActivity(Intent(requireContext(), AppActivity::class.java))
-            requireActivity().finish()
+            dataBaseRef.child(firbaseUser.uid).addListenerForSingleValueEvent(object :
+                ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        // The child node exists in the parent node
+                        startActivity(Intent(requireContext(), AppActivity::class.java))
+                        requireActivity().finish()
+
+                    } else {
+                        // The child node does not exist in the parent node
+                        startActivity(Intent(requireContext(), CollectPDataActivity::class.java))
+                        requireActivity().finish()
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Handle any errors that occur
+                    Toast.makeText(context, databaseError.message, Toast.LENGTH_SHORT).show()
+
+                }
+            })
+
         }
     }
 
@@ -109,7 +138,7 @@ class SignInFragment : Fragment() {
                 Log.d(TAG,"firebaseAuthWithGoogleAcc: loggedIn")
 
                 val firebaseuser = firebaseAuth.currentUser
-                val uid = firebaseAuth!!.uid
+                val uid = firebaseAuth.uid
                 val email = firebaseuser!!.email
                 Log.d(TAG,"firebaseAuthWithGoogleAcc: Uid: $uid")
                 Log.d(TAG,"firebaseAuthWithGoogleAcc: Email: $email")
@@ -117,6 +146,15 @@ class SignInFragment : Fragment() {
                 if (authResult.additionalUserInfo!!.isNewUser){
                     Log.d(TAG,"firebaseAuthWithGoogleAcc: account created... \n$email")
                     Toast.makeText(this.requireContext(),"Account created...\n$email", Toast.LENGTH_SHORT).show()
+                    val user = User(firebaseuser.displayName,firebaseuser.email.toString(),null,null)
+                    dataBaseRef.child(firebaseuser.uid).setValue(user).addOnCompleteListener{
+                        if (it.isSuccessful){
+                            Toast.makeText(context,"user saved in database",Toast.LENGTH_SHORT).show()
+                        }
+                        else{
+                            Toast.makeText(context,it.exception?.message,Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
                 else{
                     Log.d(TAG,"firebaseAuthWithGoogleAcc: Existing user... \n$email")

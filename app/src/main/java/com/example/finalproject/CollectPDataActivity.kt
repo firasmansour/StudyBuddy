@@ -13,8 +13,11 @@ import androidx.navigation.NavController
 import com.example.finalproject.databinding.ActivityCollectPdataBinding
 import com.example.finalproject.databinding.FragmentSignUpBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.File
@@ -38,7 +41,26 @@ class CollectPDataActivity : AppCompatActivity() {
         firebaseauth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
         dataBaseRef = database.reference.child("Users")
+        val uid = firebaseauth.currentUser?.uid
 
+//        dataBaseRef.child(firebaseauth.currentUser?.uid.toString()).addListenerForSingleValueEvent(object :
+//            ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                if (dataSnapshot.exists()) {
+//                    // The child node exists in the parent node
+//                    startActivity(Intent(this@CollectPDataActivity, AppActivity::class.java))
+//                    finish()
+//
+//                }
+//            }
+//
+//            override fun onCancelled(databaseError: DatabaseError) {
+//                // Handle any errors that occur
+//                Toast.makeText(this@CollectPDataActivity, databaseError.message, Toast.LENGTH_SHORT).show()
+//
+//
+//            }
+//        })
 
         //picking a profile pic
         binding.profileImage.setOnClickListener{
@@ -46,9 +68,26 @@ class CollectPDataActivity : AppCompatActivity() {
         }
 
         binding.saveBtn.setOnClickListener {
-            val email = intent.getStringExtra("EXTRA_EMAIL").toString()
-            val pass = intent.getStringExtra("EXTRA_PASS").toString()
-            registerUser(email,pass)
+            val name = binding.etName.text.toString()
+            val studyField = binding.etStudy.text.toString()
+            val bio = binding.etBio.text.toString()
+//            if (name == null){
+//                name = firebaseauth.currentUser?.displayName.toString()
+//            }
+            val user = User(name,firebaseauth.currentUser?.email.toString(),studyField,bio)
+            if (uid != null){
+                dataBaseRef.child(uid).setValue(user).addOnCompleteListener{
+                    if (it.isSuccessful){
+                        Toast.makeText(this@CollectPDataActivity,"user saved in database",Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this@CollectPDataActivity, AppActivity::class.java))
+                        finish()
+
+                    }
+                    else{
+                        Toast.makeText(this@CollectPDataActivity,it.exception?.message,Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
 
 
@@ -65,7 +104,7 @@ class CollectPDataActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 0 && resultCode == Activity.RESULT_OK){
             imageURI = data?.data!!
-            storageReference = FirebaseStorage.getInstance().getReference("Users/" + firebaseauth.currentUser?.uid +".jpg")
+            storageReference = FirebaseStorage.getInstance().getReference("Users/"+"profile_pics/" + firebaseauth.currentUser?.uid +".jpg")
             storageReference.putFile(imageURI).addOnCompleteListener{
                 if (it.isSuccessful){
                     Toast.makeText(this@CollectPDataActivity, "the image has been uploaded successfully!", Toast.LENGTH_SHORT).show()
@@ -86,37 +125,6 @@ class CollectPDataActivity : AppCompatActivity() {
         }
     }
 
-    private fun registerUser(email: String, pass: String) {
-        firebaseauth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
 
-            if (task.isSuccessful){
-                val uid = firebaseauth.currentUser?.uid
-                var name = binding.etName.text.toString()
-                val studyField = binding.etStudy.text.toString()
-                val bio = binding.etBio.text.toString()
-                if (name == null){
-                    name = firebaseauth.currentUser?.displayName.toString()
-                }
-                val user = User(name,studyField,bio)
-                if (uid != null){
-                    dataBaseRef.child(uid).setValue(user).addOnCompleteListener{
-                        if (it.isSuccessful){
-                            Toast.makeText(this@CollectPDataActivity,"user saved in database",Toast.LENGTH_SHORT).show()
-
-                            registerUser(email,pass)
-                        }
-                        else{
-                            Toast.makeText(this@CollectPDataActivity,it.exception?.message,Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-                startActivity(Intent(this@CollectPDataActivity, AppActivity::class.java))
-                finish()
-            }
-            else
-                Toast.makeText(this@CollectPDataActivity, task.exception.toString(), Toast.LENGTH_SHORT).show()
-
-        }
-    }
 
 }

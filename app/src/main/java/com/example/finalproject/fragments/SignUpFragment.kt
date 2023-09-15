@@ -45,14 +45,7 @@ class SignUpFragment : Fragment() {
 
             if (email.isNotEmpty() && pass.isNotEmpty() && verifyPass.isNotEmpty()) {
                 if (pass == verifyPass) {
-
-                    Intent(requireActivity(), CollectPDataActivity::class.java).also {
-                        it.putExtra("EXTRA_EMAIL",email)
-                        it.putExtra("EXTRA_PASS",pass)
-                        startActivity(it)
-                    }
-                    requireActivity().finish()
-
+                    registerUser(email,pass)
                 } else {
                     Toast.makeText(context, "Password is not same", Toast.LENGTH_SHORT).show()
                 }
@@ -62,17 +55,17 @@ class SignUpFragment : Fragment() {
 
     }
 
-//    private fun registerUser(email: String, pass: String) {
-//        firebaseauth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener {
-//            if (it.isSuccessful){
-//                startActivity(Intent(requireActivity(), AppActivity::class.java))
-//                requireActivity().finish()
-//            }
-//            else
-//                Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT).show()
-//
-//        }
-//    }
+    private fun registerUser(email: String, pass: String) {
+        firebaseauth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener {
+            if (it.isSuccessful){
+                startActivity(Intent(requireActivity(), CollectPDataActivity::class.java))
+                requireActivity().finish()
+            }
+            else
+                Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT).show()
+
+        }
+    }
 
 
 

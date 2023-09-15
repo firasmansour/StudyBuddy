@@ -24,7 +24,10 @@ class AppActivity : AppCompatActivity() {
         binding = ActivityAppBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setCurrFragment(homeFragment)
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.flFragment,homeFragment)
+            commit()
+        }
 
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){

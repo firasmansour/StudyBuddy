@@ -13,8 +13,8 @@
         android:icon="@drawable/ic_assignments"
         />
     <item
-        android:id="@+id/myProfile"
-        android:title="Profile"
+        android:id="@+id/miUsers"
+        android:title="Users"
         android:icon="@drawable/ic_profile"
         />
 </menu>

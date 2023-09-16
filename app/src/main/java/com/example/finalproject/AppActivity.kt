@@ -3,6 +3,8 @@ package com.example.finalproject
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
@@ -53,10 +55,26 @@ class AppActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
 
         checkUser()
-        binding.tmp.setOnClickListener {
-            firebaseAuth.signOut()
-            checkUser()
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.app_bar_menu,menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.miAddUser -> Toast.makeText(this@AppActivity,"add user selected",Toast.LENGTH_SHORT).show()
+            R.id.miProfile -> setCurrFragment(profileFragment)
+            R.id.miSignOut ->{
+                firebaseAuth.signOut()
+                checkUser()
+            }
         }
+
+
+        return true
     }
 
     private fun setCurrFragment(fragment: Fragment){

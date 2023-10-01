@@ -104,7 +104,7 @@ class CollectPDataActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 0 && resultCode == Activity.RESULT_OK){
             imageURI = data?.data!!
-            storageReference = FirebaseStorage.getInstance().getReference("Users/"+"profile_pics/" + firebaseauth.currentUser?.uid +".jpg")
+            storageReference = FirebaseStorage.getInstance().getReference("Users/"+"profile_pics/" + firebaseauth.currentUser?.email +".jpg")
             storageReference.putFile(imageURI).addOnCompleteListener{
                 if (it.isSuccessful){
                     Toast.makeText(this@CollectPDataActivity, "the image has been uploaded successfully!", Toast.LENGTH_SHORT).show()

@@ -1,5 +1,6 @@
 package com.example.finalproject.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.finalproject.ChatRoomActivity
 import com.example.finalproject.R
 import com.example.finalproject.User
 import com.example.finalproject.UsersRvAdapter
@@ -43,17 +45,22 @@ class SearchUsersFragment : Fragment() {
         dataBaseRef = FirebaseDatabase.getInstance().reference.child("Users")
 
 
-//        binding.rvUsers.setHasFixedSize(true)
         binding.rvUsers.layoutManager = LinearLayoutManager(context)
 
         usersList = mutableListOf()
         usersRvAdapter = UsersRvAdapter(usersList)
         binding.rvUsers.adapter = usersRvAdapter
+        usersRvAdapter.onItemClick = {
 
-        getTaskFromFirebase()
+            val intent = Intent(requireActivity(),ChatRoomActivity::class.java)
+            intent.putExtra("user",it)
+            startActivity(intent)
+        }
+
+        getUserFromFirebase()
     }
 
-    private fun getTaskFromFirebase() {
+    private fun getUserFromFirebase() {
         dataBaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 

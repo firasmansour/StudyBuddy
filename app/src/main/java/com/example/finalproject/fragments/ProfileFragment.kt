@@ -31,13 +31,16 @@ class ProfileFragment : Fragment() {
     private lateinit var dataBaseRef: DatabaseReference
     private lateinit var storageReference: StorageReference
     private lateinit var uid:String
+    private var friend: User ?= null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?
     ): View? {
         binding =  FragmentProfileBinding.inflate(inflater, container, false)
-        return binding.root
 
+        friend = arguments?.getParcelable<User>("user")
+
+        return binding.root
 
     }
 
@@ -48,7 +51,15 @@ class ProfileFragment : Fragment() {
         uid = firebaseauth.currentUser?.uid.toString()
         dataBaseRef = FirebaseDatabase.getInstance().reference.child("Users")
 
-        if (uid.isNotEmpty()){
+
+        if (friend!= null){
+            binding.name.setText(friend?.name)
+            binding.userEmail.setText(friend?.email)
+            binding.bio.setText(friend?.bio)
+            binding.studyField.setText(friend?.studyField)
+            getUserPic(friend?.email.toString())
+        }
+        else if (uid.isNotEmpty()){
 
             getUserData()
         }
@@ -57,14 +68,14 @@ class ProfileFragment : Fragment() {
 
     private fun getUserData() {
         dataBaseRef.child(uid).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
+             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     val user = snapshot.getValue(User::class.java)
                     binding.name.setText(user?.name)
                     binding.userEmail.setText(user?.email)
                     binding.bio.setText(user?.bio)
                     binding.studyField.setText(user?.studyField)
-                    getUserPic()
+                    getUserPic(user?.email.toString())
                 } else {
                     Toast.makeText(context,"user not found",Toast.LENGTH_SHORT).show()
                 }
@@ -77,8 +88,8 @@ class ProfileFragment : Fragment() {
 
     }
 
-    private fun getUserPic() {
-        storageReference = FirebaseStorage.getInstance().reference.child("Users/" + "profile_pics/" + uid + ".jpg")
+    private fun getUserPic(email:String) {
+        storageReference = FirebaseStorage.getInstance().reference.child("Users/" + "profile_pics/" + email + ".jpg")
         val localFile = File.createTempFile("tempImage", "jpg")
         storageReference.getFile(localFile).addOnSuccessListener {
             val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)

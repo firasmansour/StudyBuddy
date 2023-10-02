@@ -1,7 +1,11 @@
 package com.example.finalproject
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 import com.example.finalproject.databinding.ActivityAppBinding
 import com.example.finalproject.databinding.ActivityChatRoomBinding
 import com.example.finalproject.fragments.AssignmentsFragment
@@ -23,6 +27,7 @@ class ChatRoomActivity : AppCompatActivity() {
         binding = ActivityChatRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        firebaseAuth = FirebaseAuth.getInstance()
         val user = intent.getParcelableExtra<User>("user")
         supportActionBar?.title = user?.name
         bundle.putParcelable("user", user)
@@ -32,4 +37,37 @@ class ChatRoomActivity : AppCompatActivity() {
             commit()
         }
     }
+
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        menuInflater.inflate(R.menu.app_bar_menu,menu)
+//        val adduser = menu?.findItem(R.id.miAddUser)
+//        adduser?.isVisible = false
+//        return true
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        when(item.itemId){
+//            R.id.miProfile ->{
+//                val user = intent.getParcelableExtra<User>("user")
+//                supportActionBar?.title = user?.name
+//                bundle.putParcelable("user", user)
+//                profileFragment.arguments = bundle
+//                supportFragmentManager.beginTransaction().apply {
+//                    replace(R.id.flFragment,profileFragment)
+//                    commit()
+//                }
+//            }
+//            R.id.miSignOut ->{
+//                firebaseAuth.signOut()
+//                val intent = Intent(this@ChatRoomActivity, MainActivity::class.java)
+//                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+//                startActivity(intent)
+//                finish()
+//
+//            }
+//        }
+//
+//
+//        return true
+//    }
 }

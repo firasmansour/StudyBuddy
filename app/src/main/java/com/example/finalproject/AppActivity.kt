@@ -67,7 +67,6 @@ class AppActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.miAddUser -> Toast.makeText(this@AppActivity,"add user selected",Toast.LENGTH_SHORT).show()
             R.id.miProfile -> setCurrFragment(profileFragment)
             R.id.miSignOut ->{
                 firebaseAuth.signOut()

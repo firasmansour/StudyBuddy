@@ -12,6 +12,18 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addUser" />
+
+    <ImageView
+        android:id="@+id/addUser"
+        android:layout_width="32dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="4dp"
+        android:src="@drawable/ic_adduser"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.957"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

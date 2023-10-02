@@ -89,7 +89,7 @@ class ProfileFragment : Fragment(),EditTextPopUpFragment.EditInfoDialogListener{
             }
             binding.edit.setOnClickListener {
                 val popupDialog = EditTextPopUpFragment(orgName,orgStudy,orgBio)
-                popupDialog.setEditNameDialogListener(this)
+                popupDialog.setEditDialogListener(this)
                 popupDialog.show(childFragmentManager, "EditTextPopUp")
 
             }

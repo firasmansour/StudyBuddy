@@ -7,12 +7,16 @@ data class User(
     var name : String ?= "",
     var email : String ?= "",
     var studyField : String ?= "",
-    var bio : String ?= "")  : Parcelable {
+    var bio : String ?= "",
+    var friendsList: MutableList<String> = mutableListOf())  : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readString()
+        parcel.readString(),
+        mutableListOf<String>().apply {
+            parcel.readStringList(this)
+        }
     ) {
     }
 
@@ -21,6 +25,7 @@ data class User(
         parcel.writeString(email)
         parcel.writeString(studyField)
         parcel.writeString(bio)
+        parcel.writeStringList(friendsList)
     }
 
     override fun describeContents(): Int {
@@ -35,5 +40,14 @@ data class User(
         override fun newArray(size: Int): Array<User?> {
             return arrayOfNulls(size)
         }
+    }
+
+    fun addItem(item: String) {
+        friendsList.add(item)
+    }
+
+    // Function to remove an item from the list
+    fun removeItem(item: String) {
+        friendsList.remove(item)
     }
 }

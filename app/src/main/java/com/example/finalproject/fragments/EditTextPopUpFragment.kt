@@ -16,7 +16,7 @@ class EditTextPopUpFragment(private val originalName: String,private val origina
 
     private var listener: EditInfoDialogListener? = null
 
-    fun setEditNameDialogListener(listener: EditInfoDialogListener) {
+    fun setEditDialogListener(listener: EditInfoDialogListener) {
         this.listener = listener
     }
 

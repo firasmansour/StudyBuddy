@@ -23,12 +23,13 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.StorageReference
 
-class SearchUsersFragment : Fragment() {
+class SearchUsersFragment : Fragment() ,AddUserPopUpFragment.AddUserDialogListener{
     private lateinit var firebaseauth: FirebaseAuth
     private lateinit var binding: FragmentSearchUsersBinding
     private lateinit var dataBaseRef: DatabaseReference
     private lateinit var usersRvAdapter: UsersRvAdapter
     private lateinit var usersList: MutableList<User>
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -57,10 +58,17 @@ class SearchUsersFragment : Fragment() {
             startActivity(intent)
         }
 
-        getUserFromFirebase()
+        getUsersFromFirebase()
+
+
+        binding.addUser.setOnClickListener{
+            val popupDialog = AddUserPopUpFragment()
+            popupDialog.setAddUserDialogListener(this)
+            popupDialog.show(childFragmentManager, "addUserPopUp")
+        }
     }
 
-    private fun getUserFromFirebase() {
+    private fun getUsersFromFirebase() {
         dataBaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
@@ -83,6 +91,42 @@ class SearchUsersFragment : Fragment() {
 
 
         })
+
+    }
+
+    override fun onAdd(friendEmail: String) {///need to change
+        firebaseauth.fetchSignInMethodsForEmail(friendEmail)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val signInMethods = task.result?.signInMethods
+                    if (signInMethods.isNullOrEmpty()) {
+                        // Email is not registered or authenticated
+                        Toast.makeText(context,"there is no such user",Toast.LENGTH_SHORT).show()
+                    } else {
+                        // Email is registered and authenticated
+                        dataBaseRef.child(firebaseauth.currentUser?.uid.toString()).addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                // Check if the user exists
+                                if (dataSnapshot.exists()) {
+                                    val user = dataSnapshot.getValue(User::class.java)
+                                    user?.addItem(friendEmail)
+                                    dataBaseRef.child(firebaseauth.currentUser?.uid.toString()).setValue(user)
+                                }
+                            }
+
+                            override fun onCancelled(databaseError: DatabaseError) {
+                                // Handle any errors that may occur during the fetch
+                                Toast.makeText(context,"user not found",Toast.LENGTH_SHORT).show()
+                            }
+                        })
+                    }
+                } else {
+                    // An error occurred while checking the email
+                    val exception = task.exception
+                    Toast.makeText(context,exception?.message,Toast.LENGTH_SHORT).show()
+
+                }
+            }
 
     }
 }

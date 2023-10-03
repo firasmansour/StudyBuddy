@@ -1,17 +1,9 @@
 package com.example.finalproject
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.widget.Toast
-import com.example.finalproject.databinding.ActivityAppBinding
 import com.example.finalproject.databinding.ActivityChatRoomBinding
-import com.example.finalproject.fragments.AssignmentsFragment
-import com.example.finalproject.fragments.HomeFragment
 import com.example.finalproject.fragments.ProfileFragment
-import com.example.finalproject.fragments.SearchUsersFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 

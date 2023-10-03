@@ -6,16 +6,12 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import com.example.finalproject.databinding.ActivityAppBinding
-import com.example.finalproject.databinding.FragmentHomeBinding
 import com.example.finalproject.fragments.AssignmentsFragment
 import com.example.finalproject.fragments.HomeFragment
 import com.example.finalproject.fragments.ProfileFragment
-import com.example.finalproject.fragments.SearchUsersFragment
+import com.example.finalproject.fragments.UserFriendsFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -30,7 +26,7 @@ class AppActivity : AppCompatActivity() {
     val profileFragment = ProfileFragment()
     val homeFragment = HomeFragment()
     val assignmentsFragment = AssignmentsFragment()
-    val SearchUsersFragment = SearchUsersFragment()
+    val UserFriendsFragment = UserFriendsFragment()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAppBinding.inflate(layoutInflater)
@@ -47,7 +43,7 @@ class AppActivity : AppCompatActivity() {
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.myGroups -> setCurrFragment(homeFragment)
-                R.id.miUsers -> setCurrFragment(SearchUsersFragment)
+                R.id.miUsers -> setCurrFragment(UserFriendsFragment)
                 R.id.myAssignments -> setCurrFragment(assignmentsFragment)
             }
             true

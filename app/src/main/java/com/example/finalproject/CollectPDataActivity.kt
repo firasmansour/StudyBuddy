@@ -42,6 +42,7 @@ class CollectPDataActivity : AppCompatActivity() {
         database = FirebaseDatabase.getInstance()
         dataBaseRef = database.reference.child("Users")
         val uid = firebaseauth.currentUser?.uid
+        val email = firebaseauth.currentUser?.email.toString()
 
 //        dataBaseRef.child(firebaseauth.currentUser?.uid.toString()).addListenerForSingleValueEvent(object :
 //            ValueEventListener {

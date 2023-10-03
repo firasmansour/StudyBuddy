@@ -8,7 +8,9 @@ data class User(
     var email : String ?= "",
     var studyField : String ?= "",
     var bio : String ?= "",
-    var friendsList: MutableList<String> = mutableListOf())  : Parcelable {
+    var friendsList: MutableList<String> = mutableListOf(),
+    var tasksList: MutableList<String> = mutableListOf(),
+    var groupsList: MutableList<String> = mutableListOf()): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
@@ -16,7 +18,14 @@ data class User(
         parcel.readString(),
         mutableListOf<String>().apply {
             parcel.readStringList(this)
+        },
+        mutableListOf<String>().apply {
+            parcel.readStringList(this)
+        },
+        mutableListOf<String>().apply {
+            parcel.readStringList(this)
         }
+
     ) {
     }
 
@@ -26,6 +35,8 @@ data class User(
         parcel.writeString(studyField)
         parcel.writeString(bio)
         parcel.writeStringList(friendsList)
+        parcel.writeStringList(tasksList)
+        parcel.writeStringList(groupsList)
     }
 
     override fun describeContents(): Int {
@@ -42,12 +53,28 @@ data class User(
         }
     }
 
-    fun addItem(item: String) {
-        friendsList.add(item)
+    fun addFriend(friend: String) {
+        friendsList.add(friend)
     }
 
     // Function to remove an item from the list
-    fun removeItem(item: String) {
-        friendsList.remove(item)
+    fun removeFriend(friend: String) {
+        friendsList.remove(friend)
+    }
+    fun addTask(task: String) {
+        tasksList.add(task)
+    }
+
+    // Function to remove an item from the list
+    fun removeTask(task: String) {
+        tasksList.remove(task)
+    }
+    fun addGroup(group: String) {
+        groupsList.add(group)
+    }
+
+    // Function to remove an item from the list
+    fun removeGroup(group: String) {
+        groupsList.remove(group)
     }
 }

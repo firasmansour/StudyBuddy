@@ -14,7 +14,7 @@
         />
     <item
         android:id="@+id/miUsers"
-        android:title="Users"
+        android:title="Friends"
         android:icon="@drawable/ic_profile"
         />
 </menu>

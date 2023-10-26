@@ -13,9 +13,8 @@ import androidx.navigation.Navigation
 import com.example.finalproject.AppActivity
 import com.example.finalproject.CollectPDataActivity
 import com.example.finalproject.R
-import com.example.finalproject.User
+import com.example.finalproject.utils.User
 import com.example.finalproject.databinding.FragmentSignInBinding
-import com.example.finalproject.databinding.FragmentSignUpBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient

@@ -3,25 +3,18 @@ package com.example.finalproject
 import android.app.Activity
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
-import androidx.navigation.NavController
 import com.example.finalproject.databinding.ActivityCollectPdataBinding
-import com.example.finalproject.databinding.FragmentSignUpBinding
+import com.example.finalproject.utils.User
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.File
-import java.net.URI
 
 class CollectPDataActivity : AppCompatActivity() {
     private lateinit var firebaseauth: FirebaseAuth

@@ -1,19 +1,19 @@
-package com.example.finalproject
+package com.example.finalproject.utils
 
 import android.os.Parcel
 import android.os.Parcelable
 
-data class User(
+data class Group(
     var name : String ?= "",
-    var email : String ?= "",
-    var studyField : String ?= "",
-    var bio : String ?= "",
-    var friendsList: MutableList<String> = mutableListOf(),
+    var isPublic: Int = 1,// 1 is true , 0 is false
+    var uid: String ?= "",
+    var description: String ?= "",
+    var members: MutableList<String> = mutableListOf(),
     var tasksList: MutableList<String> = mutableListOf(),
-    var groupsList: MutableList<String> = mutableListOf()): Parcelable {
+    var admins: MutableList<String> = mutableListOf()) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
-        parcel.readString(),
+        parcel.readInt(),
         parcel.readString(),
         parcel.readString(),
         mutableListOf<String>().apply {
@@ -25,41 +25,40 @@ data class User(
         mutableListOf<String>().apply {
             parcel.readStringList(this)
         }
-
     ) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
-        parcel.writeString(email)
-        parcel.writeString(studyField)
-        parcel.writeString(bio)
-        parcel.writeStringList(friendsList)
+        parcel.writeInt(isPublic)
+        parcel.writeString(uid)
+        parcel.writeString(description)
+        parcel.writeStringList(members)
         parcel.writeStringList(tasksList)
-        parcel.writeStringList(groupsList)
+        parcel.writeStringList(admins)
     }
 
     override fun describeContents(): Int {
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<User> {
-        override fun createFromParcel(parcel: Parcel): User {
-            return User(parcel)
+    companion object CREATOR : Parcelable.Creator<Group> {
+        override fun createFromParcel(parcel: Parcel): Group {
+            return Group(parcel)
         }
 
-        override fun newArray(size: Int): Array<User?> {
+        override fun newArray(size: Int): Array<Group?> {
             return arrayOfNulls(size)
         }
     }
 
-    fun addFriend(friend: String) {
-        friendsList.add(friend)
+    fun addMember(member: String) {
+        members.add(member)
     }
 
     // Function to remove an item from the list
-    fun removeFriend(friend: String) {
-        friendsList.remove(friend)
+    fun removeMember(member: String) {
+        members.remove(member)
     }
     fun addTask(task: String) {
         tasksList.add(task)
@@ -69,12 +68,12 @@ data class User(
     fun removeTask(task: String) {
         tasksList.remove(task)
     }
-    fun addGroup(group: String) {
-        groupsList.add(group)
+    fun addAdmin(admin: String) {
+        admins.add(admin)
     }
 
     // Function to remove an item from the list
-    fun removeGroup(group: String) {
-        groupsList.remove(group)
+    fun removeAdmin(admin: String) {
+        admins.remove(admin)
     }
 }

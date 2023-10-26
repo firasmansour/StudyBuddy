@@ -3,20 +3,14 @@ package com.example.finalproject.fragments
 import android.app.Activity
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.isGone
-import com.example.finalproject.CollectPDataActivity
-import com.example.finalproject.R
-import com.example.finalproject.User
-import com.example.finalproject.databinding.ActivityCollectPdataBinding
+import com.example.finalproject.utils.User
 import com.example.finalproject.databinding.FragmentProfileBinding
-import com.example.finalproject.databinding.FragmentSignInBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -33,7 +27,7 @@ class ProfileFragment : Fragment(),EditTextPopUpFragment.EditInfoDialogListener{
     private lateinit var dataBaseRef: DatabaseReference
     private lateinit var storageReference: StorageReference
     private lateinit var uid:String
-    private var friend: User ?= null
+    private var friend: User?= null
     private lateinit var orgName:String
     private lateinit var orgStudy:String
     private lateinit var orgBio:String

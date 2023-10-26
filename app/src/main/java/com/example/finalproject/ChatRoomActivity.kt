@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.finalproject.databinding.ActivityChatRoomBinding
 import com.example.finalproject.fragments.ProfileFragment
+import com.example.finalproject.utils.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 

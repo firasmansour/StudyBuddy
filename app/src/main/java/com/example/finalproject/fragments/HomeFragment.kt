@@ -1,6 +1,6 @@
 package com.example.finalproject.fragments
 
-import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,23 +8,30 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
-import com.example.finalproject.MainActivity
-import com.example.finalproject.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.finalproject.utils.GroupsRvAdapter
 import com.example.finalproject.databinding.FragmentHomeBinding
-import com.example.finalproject.databinding.FragmentSignInBinding
+import com.example.finalproject.utils.Group
+import com.example.finalproject.utils.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
 
-class HomeFragment : Fragment() {
-    private lateinit var database: FirebaseDatabase
-    private lateinit var firebaseAuth :FirebaseAuth
+class HomeFragment : Fragment() ,AddGroupSearchListPopUpFragment.AddGroupDialogListener,CreateNewGroupPopUpFragment.CreateGroupDialogListener{
+    private lateinit var dataBaseRef: DatabaseReference
     private lateinit var navController: NavController
     private lateinit var binding: FragmentHomeBinding
+    private lateinit var firebaseauth: FirebaseAuth
+    private lateinit var storageReference: StorageReference
+    private lateinit var groupsRvAdapter: GroupsRvAdapter
+    private lateinit var groupsList: MutableList<Group>
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +39,17 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding =  FragmentHomeBinding.inflate(inflater, container, false)
+
+        firebaseauth = FirebaseAuth.getInstance()
+        dataBaseRef = FirebaseDatabase.getInstance().reference.child("Groups")
+
+
+        binding.rvGroups.layoutManager = LinearLayoutManager(context)
+
+        groupsList = mutableListOf()
+        groupsRvAdapter = GroupsRvAdapter(groupsList)
+        binding.rvGroups.adapter = groupsRvAdapter
+        getUserGroupsFromFirebase()
         return binding.root
 
     }
@@ -39,24 +57,141 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        firebaseAuth = FirebaseAuth.getInstance()
-        val user = firebaseAuth.currentUser?.displayName.toString()
-        database = FirebaseDatabase.getInstance()
-        val reference = database.reference.child("friends").child(user)
+
+
+        binding.addGroup.setOnClickListener {
+            val popupDialog = AddGroupSearchListPopUpFragment()
+            popupDialog.setAddGroupDialogListener(this)
+            popupDialog.show(childFragmentManager, "addGroupPopUp")
+        }
+
+        binding.createGroup.setOnClickListener {
+            val popupDialog2 = CreateNewGroupPopUpFragment()
+            popupDialog2.setCreateGroupDialogListener(this)
+            popupDialog2.show(childFragmentManager, "createNewGroupPopUp")
+        }
+
+
+
+    }
+
+    private fun getUserGroupsFromFirebase() {
+
+
+        dataBaseRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                fetchUserFromFirebase(firebaseauth.currentUser?.uid.toString()){
+                    groupsList.clear()
+                    for (groupSnapshot in snapshot.children) {
+                        if (it!!.groupsList.contains(groupSnapshot.key)){
+                            val group = groupSnapshot.getValue(Group::class.java)
+
+                            if (group != null) {
+
+                                groupsList.add(group)
+                            }
+                        }
+                    }
+                    groupsRvAdapter.notifyDataSetChanged()
+                }
+
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show()
+            }
+
+
+        })
+
+    }
 
 
 
 
-        binding.insertbtn.setOnClickListener {
-            val name = binding.nameEt.text.toString()
-            val data = HashMap<String, Any>()
-            data["key3"] = name
-            reference.setValue(data)
-            binding.nameEt.text = null
+    override fun onAddGroup(group : Group) {
+        val groupUid = group.uid.toString()
+        val tmp = FirebaseDatabase.getInstance().reference.child("Users")
+        val userUid = firebaseauth.currentUser?.uid.toString()
+        fetchUserFromFirebase(userUid){
+
+            if (!it!!.groupsList.contains(groupUid)){
+                it.groupsList.add(groupUid)
+                tmp.child(userUid).setValue(it)
+                groupsList.add(group)
+                groupsRvAdapter.notifyItemInserted(groupsList.size-1)
+
+                Toast.makeText(context,"group added successfully",Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(context,"you already in this group",Toast.LENGTH_SHORT).show()
+            }
 
 
+        }
+    }
+
+    override fun onCreateNewGroup(groupName: String, isPublic: Int, description: String , imageURI: Uri) {
+        val key = dataBaseRef.push().key
+        val userUid = firebaseauth.currentUser?.uid.toString()
+        val group = Group(groupName,isPublic,key,description)
+        val tmp = FirebaseDatabase.getInstance().reference.child("Users")
+        group.addAdmin(firebaseauth.currentUser?.uid.toString())
+        group.addMember(firebaseauth.currentUser?.uid.toString())
+        dataBaseRef.child(key.toString()).setValue(group).addOnCompleteListener {
+            if (it.isSuccessful){
+                //add group to user group list
+                fetchUserFromFirebase(userUid){
+
+                    it!!.groupsList.add(key.toString())
+                    tmp.child(userUid).setValue(it)
+
+                }
+
+                groupsList.add(group)
+                groupsRvAdapter.notifyItemInserted(groupsList.size-1)
+                Toast.makeText(context,"group added successfully!" , Toast.LENGTH_SHORT).show()
+                storageReference = FirebaseStorage.getInstance().getReference("Groups/"+key.toString()+"/" + "GroupImage"+".jpg")
+                storageReference.putFile(imageURI).addOnCompleteListener{ task ->
+                    if (task.isSuccessful){
+                        Toast.makeText(context, "the image has been uploaded successfully!", Toast.LENGTH_SHORT).show()
+
+                    }
+                    else{
+                        Toast.makeText(context, "somthing went wrong the image didnt upload", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            }
+            else {
+                Toast.makeText(context, it.exception?.message.toString(), Toast.LENGTH_SHORT).show()
+            }
         }
 
 
     }
+
+
+    fun fetchUserFromFirebase(uid: String, callback: (User?) -> Unit) {
+        val tmp =  FirebaseDatabase.getInstance().reference.child("Users")
+        tmp.child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Check if the user exists
+                if (dataSnapshot.exists()) {
+                    val user = dataSnapshot.getValue(User::class.java)
+                    callback(user)
+                } else {
+                    callback(null) // User not found
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle any errors that may occur during the fetch
+                Toast.makeText(context,"user not found",Toast.LENGTH_SHORT).show()
+                callback(null)
+            }
+        })
+    }
+
+
 }

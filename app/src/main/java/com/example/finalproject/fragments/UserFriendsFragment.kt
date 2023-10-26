@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.finalproject.ChatRoomActivity
-import com.example.finalproject.User
-import com.example.finalproject.UsersRvAdapter
+import com.example.finalproject.utils.User
+import com.example.finalproject.utils.UsersRvAdapter
 import com.example.finalproject.databinding.FragmentSearchUsersBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -25,6 +25,8 @@ class UserFriendsFragment : Fragment() ,AddUserPopUpFragment.AddUserDialogListen
     private lateinit var dataBaseRef: DatabaseReference
     private lateinit var usersRvAdapter: UsersRvAdapter
     private lateinit var usersList: MutableList<User>
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,7 +59,7 @@ class UserFriendsFragment : Fragment() ,AddUserPopUpFragment.AddUserDialogListen
             startActivity(intent)
         }
 
-        getUsersFromFirebase()
+//        getUsersFromFirebase()
 
 
         binding.addUser.setOnClickListener{

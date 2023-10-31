@@ -12,6 +12,8 @@ import com.example.finalproject.ChatRoomActivity
 import com.example.finalproject.utils.User
 import com.example.finalproject.utils.UsersRvAdapter
 import com.example.finalproject.databinding.FragmentSearchUsersBinding
+import com.example.finalproject.utils.AppUtils.fetchUserFromFirebase
+import com.example.finalproject.utils.AppUtils.fetchUserUidByEmail
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -73,7 +75,7 @@ class UserFriendsFragment : Fragment() ,AddUserPopUpFragment.AddUserDialogListen
 
         dataBaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                fetchUserFromFirebase(firebaseauth.currentUser?.uid.toString()){
+                fetchUserFromFirebase(requireContext(),firebaseauth.currentUser?.uid.toString()){
                     usersList.clear()
                     for (userSnapshot in snapshot.children) {
                         if (it!!.friendsList.contains(userSnapshot.key)){
@@ -101,36 +103,13 @@ class UserFriendsFragment : Fragment() ,AddUserPopUpFragment.AddUserDialogListen
     }
 
 
-    fun fetchUserUidByEmail(email: String,callback: (String?) -> Unit)  {
-
-        dataBaseRef.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // Check if a user with the specified email exists
-                if (dataSnapshot.exists()) {
-                    for (userSnapshot in dataSnapshot.children) {
-                        val uid = userSnapshot.key.toString()
-                        callback(uid)
-                        return
-                    }
-                } else {
-                    Toast.makeText(context,"There is no such User",Toast.LENGTH_SHORT).show()
-                    callback(null)
-                }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                Toast.makeText(context,databaseError.message,Toast.LENGTH_SHORT).show()
-                callback(null)
-            }
-        })
-    }
 
     override fun onAdd(friendEmail: String) {
         if (friendEmail == firebaseauth.currentUser?.email.toString()){
             Toast.makeText(context,"you cant add your self XD,GET SOME FRIENDS! ",Toast.LENGTH_SHORT).show()
             return
         }
-        fetchUserUidByEmail(friendEmail) {friendUid ->
+        fetchUserUidByEmail(requireContext(),friendEmail) {friendUid ->
             if (friendUid!=null){
                 val userUid = firebaseauth.currentUser?.uid.toString()
                 dataBaseRef.child(userUid).addListenerForSingleValueEvent(object :
@@ -162,23 +141,5 @@ class UserFriendsFragment : Fragment() ,AddUserPopUpFragment.AddUserDialogListen
         }
 
     }
-    fun fetchUserFromFirebase(uid: String, callback: (User?) -> Unit) {
-        dataBaseRef.child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // Check if the user exists
-                if (dataSnapshot.exists()) {
-                    val user = dataSnapshot.getValue(User::class.java)
-                    callback(user)
-                } else {
-                    callback(null) // User not found
-                }
-            }
 
-            override fun onCancelled(databaseError: DatabaseError) {
-                // Handle any errors that may occur during the fetch
-                Toast.makeText(context,"user not found",Toast.LENGTH_SHORT).show()
-                callback(null)
-            }
-        })
-    }
 }

@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.finalproject.databinding.FragmentAddGroupSearchListPopUpBinding
+import com.example.finalproject.utils.AppUtils
 import com.example.finalproject.utils.Group
 import com.example.finalproject.utils.GroupsRvAdapter
 import com.google.firebase.auth.FirebaseAuth
@@ -18,7 +20,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 
-class AddGroupSearchListPopUpFragment : DialogFragment() {
+class AddGroupSearchListPopUpFragment : DialogFragment() ,JoinPrivateGroupPopUpFragment.JoinPrivateGroupDialogListener{
 
     private lateinit var binding: FragmentAddGroupSearchListPopUpBinding
     private lateinit var groupsRvAdapter: GroupsRvAdapter
@@ -61,9 +63,43 @@ class AddGroupSearchListPopUpFragment : DialogFragment() {
             listener?.onAddGroup(it)
             dismiss()
         }
+        binding.joinGroup.setOnClickListener {
+            val popupDialog = JoinPrivateGroupPopUpFragment()
+            popupDialog.setJoinPrivateGroupDialogListener(this)
+            popupDialog.show(childFragmentManager, "joinPrivateGroupPopUp")
+        }
+
+        binding.searchView.setOnQueryTextListener(object :SearchView.OnQueryTextListener,
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterList(newText.toString())
+                return true
+            }
+        })
 
     }
-interface AddGroupDialogListener{
+
+    private fun filterList(text: String) {
+        var filteredList:MutableList<Group> = mutableListOf()
+
+        for (group in publicGroupsList){
+            if (group.name!!.toLowerCase().contains(text.toLowerCase())){
+                filteredList.add(group)
+            }
+        }
+        if (filteredList.isEmpty()){
+            Toast.makeText(context, "NO such group", Toast.LENGTH_SHORT).show()
+        }else{
+            groupsRvAdapter.setFilteredList(filteredList)
+        }
+
+    }
+
+    interface AddGroupDialogListener{
     fun onAddGroup(group : Group)
 }
 
@@ -96,6 +132,15 @@ interface AddGroupDialogListener{
 
 
         })
+
+    }
+
+    override fun onJoin(groupUid: String) {
+
+        AppUtils.fetchGroupFromFirebase(requireContext(), groupUid) {
+            listener?.onAddGroup(it!!)
+            dismiss()
+        }
 
     }
 

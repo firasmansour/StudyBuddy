@@ -1,6 +1,7 @@
 package com.example.finalproject.fragments
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.example.finalproject.utils.User
 import com.example.finalproject.databinding.FragmentProfileBinding
+import com.example.finalproject.utils.AppUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -52,6 +54,7 @@ class ProfileFragment : Fragment(),EditTextPopUpFragment.EditInfoDialogListener{
 
 
         if (friend!= null){
+            binding.unfriendBtn.visibility = View.VISIBLE
             binding.profileImage.isClickable = false
             binding.edit.visibility = View.GONE
 
@@ -64,8 +67,9 @@ class ProfileFragment : Fragment(),EditTextPopUpFragment.EditInfoDialogListener{
         else if (uid.isNotEmpty()){
 
 
-            fetchUserFromFirebase(uid) { user ->
+            AppUtils.fetchUserFromFirebase(requireContext(),uid) { user ->
                 if (user != null) {
+                    binding.unfriendBtn.visibility = View.GONE
                     binding.name.setText(user.name)
                     binding.userEmail.setText(user.email)
                     binding.bio.setText(user.bio)
@@ -90,28 +94,22 @@ class ProfileFragment : Fragment(),EditTextPopUpFragment.EditInfoDialogListener{
 
     }
 
-    }
+        binding.unfriendBtn.setOnClickListener {
+            AppUtils.fetchUserFromFirebase(requireContext(),uid){user ->
+                AppUtils.fetchUserUidByEmail(requireContext(),friend!!.email.toString()){frienduid ->
+                    if (frienduid != null){
+                        user!!.removeFriend(frienduid)
+                        dataBaseRef.child(uid).setValue(user)
+                        requireActivity().finish()
 
-
-    fun fetchUserFromFirebase(uid: String, callback: (User?) -> Unit) {
-        dataBaseRef.child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // Check if the user exists
-                if (dataSnapshot.exists()) {
-                    val user = dataSnapshot.getValue(User::class.java)
-                    callback(user)
-                } else {
-                    callback(null) // User not found
+                    }
                 }
             }
+        }
 
-            override fun onCancelled(databaseError: DatabaseError) {
-                // Handle any errors that may occur during the fetch
-                Toast.makeText(context,"user not found",Toast.LENGTH_SHORT).show()
-                callback(null)
-            }
-        })
     }
+
+
 
     private fun getUserPic(email:String) {
         storageReference = FirebaseStorage.getInstance().reference.child("Users/" + "profile_pics/" + email + ".jpg")
@@ -158,7 +156,7 @@ class ProfileFragment : Fragment(),EditTextPopUpFragment.EditInfoDialogListener{
     }
 
     override fun onEdited(newName: String, newStudy: String, newBio: String) {
-        fetchUserFromFirebase(uid) { user ->
+        AppUtils.fetchUserFromFirebase(requireContext(),uid) { user ->
             if (user != null) {
                 if (newName.isNotEmpty()){
                     user.name = newName
@@ -180,4 +178,5 @@ class ProfileFragment : Fragment(),EditTextPopUpFragment.EditInfoDialogListener{
             }
         }
     }
+
 }

@@ -12,11 +12,16 @@ import java.io.File
 
 class GroupsRvAdapter(
 
-    private val List: MutableList<Group>
+    private var List: MutableList<Group>
 
 ) : RecyclerView.Adapter<GroupsRvAdapter.GroupsRvViewHolder>(){
     private lateinit var firebaseauth: FirebaseAuth
     private lateinit var storageReference: StorageReference
+
+    fun setFilteredList(filteredList: MutableList<Group>){
+        this.List = filteredList
+        notifyDataSetChanged()
+    }
 
     var onItemClick : ((Group) -> Unit)? = null
     inner class GroupsRvViewHolder(val binding: EachGroupItemBinding) : RecyclerView.ViewHolder(binding.root)

@@ -1,5 +1,6 @@
 package com.example.finalproject.fragments
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,8 +10,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.finalproject.ChatRoomActivity
+import com.example.finalproject.GroupRoomActivity
 import com.example.finalproject.utils.GroupsRvAdapter
 import com.example.finalproject.databinding.FragmentHomeBinding
+import com.example.finalproject.utils.AppUtils
 import com.example.finalproject.utils.Group
 import com.example.finalproject.utils.User
 import com.google.firebase.auth.FirebaseAuth
@@ -71,6 +75,12 @@ class HomeFragment : Fragment() ,AddGroupSearchListPopUpFragment.AddGroupDialogL
             popupDialog2.show(childFragmentManager, "createNewGroupPopUp")
         }
 
+        groupsRvAdapter.onItemClick = {
+            val intent = Intent(requireActivity(), GroupRoomActivity::class.java)
+            intent.putExtra("group",it)
+            startActivity(intent)
+        }
+
 
 
     }
@@ -80,7 +90,7 @@ class HomeFragment : Fragment() ,AddGroupSearchListPopUpFragment.AddGroupDialogL
 
         dataBaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                fetchUserFromFirebase(firebaseauth.currentUser?.uid.toString()){
+                AppUtils.fetchUserFromFirebase(requireContext(),firebaseauth.currentUser?.uid.toString()){
                     groupsList.clear()
                     for (groupSnapshot in snapshot.children) {
                         if (it!!.groupsList.contains(groupSnapshot.key)){
@@ -114,13 +124,20 @@ class HomeFragment : Fragment() ,AddGroupSearchListPopUpFragment.AddGroupDialogL
         val groupUid = group.uid.toString()
         val tmp = FirebaseDatabase.getInstance().reference.child("Users")
         val userUid = firebaseauth.currentUser?.uid.toString()
-        fetchUserFromFirebase(userUid){
+        AppUtils.fetchUserFromFirebase(requireContext(),userUid){
 
             if (!it!!.groupsList.contains(groupUid)){
                 it.groupsList.add(groupUid)
                 tmp.child(userUid).setValue(it)
                 groupsList.add(group)
                 groupsRvAdapter.notifyItemInserted(groupsList.size-1)
+
+                //add user to group members list
+                if (!group.members.contains(userUid)){
+                    group.addMember(userUid)
+                    dataBaseRef.child(groupUid).setValue(group)
+                }
+
 
                 Toast.makeText(context,"group added successfully",Toast.LENGTH_SHORT).show()
             }else{
@@ -141,7 +158,7 @@ class HomeFragment : Fragment() ,AddGroupSearchListPopUpFragment.AddGroupDialogL
         dataBaseRef.child(key.toString()).setValue(group).addOnCompleteListener {
             if (it.isSuccessful){
                 //add group to user group list
-                fetchUserFromFirebase(userUid){
+                AppUtils.fetchUserFromFirebase(requireContext(),userUid){
 
                     it!!.groupsList.add(key.toString())
                     tmp.child(userUid).setValue(it)
@@ -171,27 +188,6 @@ class HomeFragment : Fragment() ,AddGroupSearchListPopUpFragment.AddGroupDialogL
 
     }
 
-
-    fun fetchUserFromFirebase(uid: String, callback: (User?) -> Unit) {
-        val tmp =  FirebaseDatabase.getInstance().reference.child("Users")
-        tmp.child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // Check if the user exists
-                if (dataSnapshot.exists()) {
-                    val user = dataSnapshot.getValue(User::class.java)
-                    callback(user)
-                } else {
-                    callback(null) // User not found
-                }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                // Handle any errors that may occur during the fetch
-                Toast.makeText(context,"user not found",Toast.LENGTH_SHORT).show()
-                callback(null)
-            }
-        })
-    }
 
 
 }

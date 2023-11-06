@@ -1,5 +1,8 @@
 package com.example.finalproject
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -27,6 +30,18 @@ class AppActivity : AppCompatActivity() {
     val homeFragment = HomeFragment()
     val assignmentsFragment = AssignmentsFragment()
     val UserFriendsFragment = UserFriendsFragment()
+
+    override fun onResume() {
+        super.onResume()
+        val sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE)
+        val groupCode = sharedPreferences.getString("groupCode", "")
+        val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("groupCode", groupCode)
+        clipboardManager.setPrimaryClip(clipData)
+        val text = clipboardManager.primaryClip?.getItemAt(0)?.text.toString()
+//        Toast.makeText(this,text,Toast.LENGTH_SHORT).show()
+
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAppBinding.inflate(layoutInflater)

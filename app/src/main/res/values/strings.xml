@@ -11,4 +11,6 @@
     <string name="enter_your_name">Enter your name</string>
     <string name="enter_your_field_of_study">Enter your field of study</string>
     <string name="write_a_simple_bio">write a simple Bio</string>
+    <string name="back"><![CDATA[<-]]></string>
+    <string name="forward"><![CDATA[->]]></string>
 </resources>

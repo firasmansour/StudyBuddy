@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/miProfile"
+        android:title="Profile"
+        app:showAsAction="withText"></item>
+    <item
+        android:id="@+id/miTasks"
+        android:title="Tasks"
+        app:showAsAction="withText"></item>
+    <item
+        android:id="@+id/miGroupId"
+        android:title="GroupId"
+        app:showAsAction="withText"></item>
+</menu>

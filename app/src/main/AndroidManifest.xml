@@ -14,7 +14,8 @@
         tools:targetApi="31">
         <activity
             android:name=".GroupRoomActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Base.Theme.ActionBar" />
         <activity
             android:name=".ChatRoomActivity"
             android:exported="false"

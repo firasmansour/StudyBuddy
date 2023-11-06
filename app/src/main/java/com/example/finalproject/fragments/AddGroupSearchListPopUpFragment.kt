@@ -27,6 +27,7 @@ class AddGroupSearchListPopUpFragment : DialogFragment() ,JoinPrivateGroupPopUpF
     private lateinit var publicGroupsList: MutableList<Group>
     private lateinit var dataBaseRef: DatabaseReference
     private lateinit var firebaseauth: FirebaseAuth
+    private lateinit var filteredList:MutableList<Group>
 
     private var listener: AddGroupDialogListener? = null
 
@@ -91,11 +92,7 @@ class AddGroupSearchListPopUpFragment : DialogFragment() ,JoinPrivateGroupPopUpF
                 filteredList.add(group)
             }
         }
-        if (filteredList.isEmpty()){
-            Toast.makeText(context, "NO such group", Toast.LENGTH_SHORT).show()
-        }else{
-            groupsRvAdapter.setFilteredList(filteredList)
-        }
+        groupsRvAdapter.setFilteredList(filteredList)
 
     }
 

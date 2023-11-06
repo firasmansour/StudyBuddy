@@ -14,6 +14,7 @@ class ChatRoomActivity : AppCompatActivity() {
     private lateinit var dataBaseRef: DatabaseReference
     val profileFragment = ProfileFragment()
     val bundle = Bundle()
+    private var user: User ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +22,7 @@ class ChatRoomActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         firebaseAuth = FirebaseAuth.getInstance()
-        val user = intent.getParcelableExtra<User>("user")
+        user = intent.getParcelableExtra<User>("user")
         supportActionBar?.title = user?.name
         bundle.putParcelable("user", user)
         profileFragment.arguments = bundle

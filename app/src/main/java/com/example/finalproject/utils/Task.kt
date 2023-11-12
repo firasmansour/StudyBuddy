@@ -2,19 +2,18 @@ package com.example.finalproject.utils
 
 import android.os.Parcel
 import android.os.Parcelable
+import java.time.Year
 
 data class Task(var title : String ?= "",
                 var description : String ?= "",
-                var uploadDayDate : Int ?= -1,
-                var uploadmonthDate : Int ?= -1,
-                var uploadYearDate : Int ?= -1,
-                var pdfLink : String ?= "",
-                var pdfName : String ?= ""): Parcelable {
+                var date : String ?= "2023-11-11",
+                var atHour : Int ?= -1,
+                var pdfName : String ?= "",
+                var pdfLink : String ?= ""): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
-        parcel.readInt(),
-        parcel.readInt(),
+        parcel.readString(),
         parcel.readInt(),
         parcel.readString(),
         parcel.readString()
@@ -24,11 +23,10 @@ data class Task(var title : String ?= "",
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(title)
         parcel.writeString(description)
-        parcel.writeInt(uploadDayDate!!)
-        parcel.writeInt(uploadmonthDate!!)
-        parcel.writeInt(uploadYearDate!!)
-        parcel.writeString(pdfLink)
+        parcel.writeString(date)
+        parcel.writeInt(atHour!!)
         parcel.writeString(pdfName)
+        parcel.writeString(pdfLink)
     }
 
     override fun describeContents(): Int {

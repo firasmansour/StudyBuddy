@@ -2,8 +2,10 @@ package com.example.finalproject.utils
 
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.finalproject.databinding.EachTaskItemBinding
 import com.example.finalproject.databinding.EachUserItemBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
@@ -13,17 +15,18 @@ import java.io.File
 
 class WeeklyTasksRvAdapter(
 
-    private val List: MutableList<User>
+    private val List: MutableList<Task>,
+    private val isAdmin:Boolean
 
 ) : RecyclerView.Adapter<WeeklyTasksRvAdapter.WeeklyTasksRvViewHolder>(){
     private lateinit var firebaseauth: FirebaseAuth
     private lateinit var storageReference: StorageReference
 
-//    var onItemClick : ((User) -> Unit)? = null
-    inner class WeeklyTasksRvViewHolder(val binding: EachUserItemBinding) : RecyclerView.ViewHolder(binding.root)
+    var onItemClick : ((Task) -> Unit)? = null
+    inner class WeeklyTasksRvViewHolder(val binding: EachTaskItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeeklyTasksRvViewHolder {
-        val binding = EachUserItemBinding.inflate(LayoutInflater.from(parent.context))
+        val binding = EachTaskItemBinding.inflate(LayoutInflater.from(parent.context))
         firebaseauth = FirebaseAuth.getInstance()
         return WeeklyTasksRvViewHolder(binding)
     }
@@ -33,6 +36,21 @@ class WeeklyTasksRvAdapter(
     }
 
     override fun onBindViewHolder(holder: WeeklyTasksRvViewHolder, position: Int) {
+        with(holder) {
+            with(List[position]) {
+               binding.taskTitle.setText(this.title)
+                if (!isAdmin){
+                    binding.deleteTask.visibility = View.GONE
+                    binding.editTask.visibility = View.GONE
+                }
+
+                binding.root.setOnClickListener {
+                    onItemClick?.invoke(this)
+                }
+
+
+            }
+        }
 
     }
 

@@ -9,7 +9,7 @@ data class Group(
     var uid: String ?= "",
     var description: String ?= "",
     var members: MutableList<String> = mutableListOf(),
-    var tasksList: MutableList<String> = mutableListOf(),
+    var tasksList: MutableList<Task> = mutableListOf(),
     var admins: MutableList<String> = mutableListOf()) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
@@ -19,9 +19,7 @@ data class Group(
         mutableListOf<String>().apply {
             parcel.readStringList(this)
         },
-        mutableListOf<String>().apply {
-            parcel.readStringList(this)
-        },
+        parcel.createTypedArrayList(Task.CREATOR) ?.toMutableList()?: mutableListOf<Task>(),
         mutableListOf<String>().apply {
             parcel.readStringList(this)
         }
@@ -34,7 +32,7 @@ data class Group(
         parcel.writeString(uid)
         parcel.writeString(description)
         parcel.writeStringList(members)
-        parcel.writeStringList(tasksList)
+        parcel.writeTypedList(tasksList)
         parcel.writeStringList(admins)
     }
 
@@ -60,12 +58,12 @@ data class Group(
     fun removeMember(member: String) {
         members.remove(member)
     }
-    fun addTask(task: String) {
+    fun addTask(task: Task) {
         tasksList.add(task)
     }
 
     // Function to remove an item from the list
-    fun removeTask(task: String) {
+    fun removeTask(task: Task) {
         tasksList.remove(task)
     }
     fun addAdmin(admin: String) {

@@ -9,9 +9,7 @@ import com.google.firebase.database.ValueEventListener
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
-
-
+import java.time.format.DateTimeParseException
 
 
 object AppUtils {
@@ -118,4 +116,27 @@ object AppUtils {
         return null
     }
 
+    fun isDateValid(context: Context,dateString: String): Boolean {
+        try {
+            // Attempt to parse the date string
+            val parsedDate = LocalDate.parse(dateString)
+
+            // If parsing is successful, the date is valid
+            return true
+        } catch (e: DateTimeParseException) {
+            // If an exception occurs during parsing, the date is not valid
+            Toast.makeText(context,e.message,Toast.LENGTH_SHORT).show()
+            return false
+        }
+    }
+    fun tasksForADay(tasks:MutableList<Task>,selectedDate: LocalDate?): ArrayList<Task> {
+        val filteredTasks = ArrayList<Task>()
+        for (task in tasks){
+            val date = LocalDate.parse(task.date)
+            if (date == selectedDate){
+                filteredTasks.add(task)
+            }
+        }
+        return filteredTasks
+    }
 }

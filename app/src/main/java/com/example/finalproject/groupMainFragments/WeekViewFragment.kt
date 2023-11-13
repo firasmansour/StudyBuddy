@@ -30,7 +30,7 @@ import java.time.LocalDate
 import kotlin.properties.Delegates
 
 
-class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpFragment.AddTaskDialogListener{
+class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpFragment.AddTaskDialogListener,WeeklyTasksRvAdapter.OnTaskClickListener{
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var dataBaseRef: DatabaseReference
     private lateinit var storageReference: StorageReference
@@ -71,7 +71,7 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
         }
         binding.newTaskBtn.setOnClickListener {
             if (isUserAdmin){
-                val popupDialog = AddTaskPopUpFragment()
+                val popupDialog = AddTaskPopUpFragment("","",AppUtils.selectedDate.toString())
                 popupDialog.setAddTaskDialogListener(this)
                 popupDialog.show(childFragmentManager, "AddTaskPopUp")
             }else{
@@ -93,10 +93,11 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
     }
 
     private fun setTaskAdpater() {
-        val tasksForTheDay = AppUtils.tasksForADay(group.tasksList,AppUtils.selectedDate)
+        val tasksForTheDay = AppUtils.tasksForADay(group.tasksMap,AppUtils.selectedDate)
         taskRvAdapter = WeeklyTasksRvAdapter(tasksForTheDay,isUserAdmin)
         binding.TaskRv.layoutManager =  LinearLayoutManager(context)
         binding.TaskRv.adapter = taskRvAdapter
+        taskRvAdapter.setOnTaskClickListener(this)
     }
 
     override fun onItemClick(date: LocalDate) {
@@ -104,25 +105,52 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
         setWeekView()
     }
 
-    override fun onAddTask(title: String, description: String, date: String, hour: Int, pdfName: String?, pdfUri: Uri?) {
-        if (pdfUri!=null){
-            val tmpStorage = storageReference.child("$date/"+title+"_"+pdfName)
-            pdfUri.let { uri ->
-                tmpStorage.putFile(uri).addOnSuccessListener {
-                    tmpStorage.downloadUrl.addOnSuccessListener {downloadUri->
-                        val task = Task(title,description,date,hour,pdfName,downloadUri.toString())
-                        group.addTask(task)
-                        dataBaseRef.child(group.uid!!).setValue(group)
-                        setTaskAdpater()
+    override fun onAddTask(title: String, description: String, date: String, hour: Int, pdfName: String?, pdfUri: Uri?,pdfLink: String?,taskKey:String?) {
+
+        if (taskKey==null){
+            if (pdfUri!=null && pdfName!=null){
+                val tmpStorage = storageReference.child("$date/"+title+"_"+pdfName)
+                pdfUri.let { uri ->
+                    tmpStorage.putFile(uri).addOnSuccessListener {
+                        tmpStorage.downloadUrl.addOnSuccessListener {downloadUri->
+                            dataBaseRef.child(group.uid!!).child("tasksMap").push().key?.let {key->//could make the file saved as the key not that above!!
+                                val task = Task(title,description,date,hour, key,pdfName,downloadUri.toString())
+                                group.addTask(key,task)
+                                dataBaseRef.child(group.uid!!).setValue(group)
+                                setTaskAdpater()
+                            }
+                        }
                     }
                 }
             }
+            else{
+                dataBaseRef.child(group.uid!!).child("tasksMap").push().key?.let { key ->
+                    val task = Task(title, description, date, hour,key)
+                    group.addTask(key,task)
+                    dataBaseRef.child(group.uid!!).setValue(group)
+                    setTaskAdpater()
+                }
+            }
         }else{
-            val task = Task(title,description,date,hour)
-            group.addTask(task)
+            val task = Task(title, description, date, hour,taskKey,pdfName,pdfLink)
+            group.removeTask(taskKey)
+            group.addTask(taskKey,task)
             dataBaseRef.child(group.uid!!).setValue(group)
             setTaskAdpater()
+
         }
+    }
+
+    override fun onDelete(key: String) {
+        group.removeTask(key)
+        dataBaseRef.child(group.uid!!).setValue(group)
+        setTaskAdpater()
+    }
+
+    override fun onEdit(task: Task) {
+        val popupDialog = AddTaskPopUpFragment(task.title,task.description,task.date,task.atHour.toString(),task.pdfName,task.pdfLink,task.key)
+        popupDialog.setAddTaskDialogListener(this)
+        popupDialog.show(childFragmentManager, "AddTaskPopUp")
     }
 
 

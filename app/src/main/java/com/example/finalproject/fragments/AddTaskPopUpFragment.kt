@@ -15,7 +15,13 @@ import com.example.finalproject.R
 import com.example.finalproject.databinding.FragmentAddTaskPopUpBinding
 import com.example.finalproject.utils.AppUtils
 
-class AddTaskPopUpFragment : DialogFragment() {
+class AddTaskPopUpFragment(private val origTitle: String?="",
+                           private val origDescription: String?="",
+                           private val origDate: String?="",
+                           private val origHour: String?="",
+                           private val origpdfName:String?="No Pdf Yet",
+                           private val pdfLink:String?=null,
+                           private val taskKey:String?=null) : DialogFragment() {
     private lateinit var binding : FragmentAddTaskPopUpBinding
     private var pdfFileUri: Uri? = null
     private var pdfname: String? = null
@@ -36,6 +42,13 @@ class AddTaskPopUpFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.taskTitleEt.setText(origTitle)
+        binding.taskDescriptionEt.setText(origDescription)
+        binding.dateEt.setText(origDate)
+        binding.pickHourEt.setText(origHour)
+        binding.fileName.setText(origpdfName)
+        pdfname = origpdfName
         binding.Close.setOnClickListener{
             dismiss()
         }
@@ -43,26 +56,35 @@ class AddTaskPopUpFragment : DialogFragment() {
         binding.pdfFile.setOnClickListener {
             launcher.launch("application/pdf")
         }
+
         binding.saveBtn.setOnClickListener {
             val title = binding.taskTitleEt.text.toString()
             val description = binding.taskDescriptionEt.text.toString()
             val date = binding.dateEt.text.toString()
-            var hour =-1
-            binding.hourSpinner.onItemSelectedListener = object :AdapterView.OnItemSelectedListener{
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    hour = position+1
-                    Toast.makeText(context,hour.toString(),Toast.LENGTH_SHORT).show()
-                }
 
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                    Toast.makeText(context,"pick an hour for the task",Toast.LENGTH_SHORT).show()
-                }
+            val hour = binding.pickHourEt.text.toString()
 
-            }
+
+
+//            binding.hourSpinner.onItemSelectedListener = object :AdapterView.OnItemSelectedListener{
+//                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+//                    hour = position+1
+//
+//                }
+//
+//                override fun onNothingSelected(parent: AdapterView<*>?) {
+//                    Toast.makeText(context,"pick an hour for the task",Toast.LENGTH_SHORT).show()
+//                }
+//
+//            }
+
             if (AppUtils.isDateValid(requireContext(),date)){
-
-                listener?.onAddTask(title,description,date,hour, pdfname, pdfFileUri)
-                dismiss()
+                if (checkHourInput(hour)){
+                    listener?.onAddTask(title,description,date,hour.toInt(), pdfname, pdfFileUri,pdfLink,taskKey)
+                    dismiss()
+                }else{
+                    Toast.makeText(context,"enter a valid hour",Toast.LENGTH_SHORT).show()
+                }
 
             }else{
                 Toast.makeText(context,"date is invalid",Toast.LENGTH_SHORT).show()
@@ -85,7 +107,18 @@ class AddTaskPopUpFragment : DialogFragment() {
         binding.fileName.text = pdfname.toString()
     }
 
+    private fun checkHourInput(hour:String):Boolean{
+        return try {
+            val tmp = hour.toInt()
+            tmp in 6..24
+
+        }catch (e: NumberFormatException){
+
+            false
+        }
+    }
+
     interface AddTaskDialogListener {
-        fun onAddTask(title: String,description: String,date: String,hour:Int,pdfName:String?=null,pdfUri:Uri?=null)
+        fun onAddTask(title: String,description: String,date: String,hour:Int,pdfName:String?=null,pdfUri:Uri?=null,pdfLink: String?=null,taskKey:String?=null)
     }
 }

@@ -53,9 +53,13 @@ class HomeFragment : Fragment() ,AddGroupSearchListPopUpFragment.AddGroupDialogL
         groupsList = mutableListOf()
         groupsRvAdapter = GroupsRvAdapter(groupsList)
         binding.rvGroups.adapter = groupsRvAdapter
-        getUserGroupsFromFirebase()
         return binding.root
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getUserGroupsFromFirebase()
     }
 
 

@@ -123,6 +123,40 @@
         </com.google.android.material.card.MaterialCardView>
 
 
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardView4"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="36dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="8dp"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/pdfFile"
+            app:layout_constraintTop_toBottomOf="@+id/cardView3">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/white"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/pickHourEt"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@color/white"
+                    android:hint="pick hour: 6 to 24"
+                    android:paddingStart="12dp"
+                    android:paddingTop="15dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
         <ImageView
             android:id="@+id/pdfFile"
             android:layout_width="100dp"
@@ -134,23 +168,23 @@
             app:layout_constraintTop_toBottomOf="@+id/cardView3"
             app:tint="@color/primary_color" />
 
-        <Spinner
-            android:id="@+id/hourSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            android:layout_marginEnd="80dp"
-            android:entries="@array/pickHour"
-            android:minHeight="48dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.679"
-            app:layout_constraintStart_toEndOf="@+id/pdfFile"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3" />
+        <!--        <Spinner-->
+        <!--            android:id="@+id/hourSpinner"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="28dp"-->
+        <!--            android:layout_marginEnd="80dp"-->
+        <!--            android:entries="@array/pickHour"-->
+        <!--            android:minHeight="48dp"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintHorizontal_bias="0.679"-->
+        <!--            app:layout_constraintStart_toEndOf="@+id/pdfFile"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/cardView3" />-->
 
         <TextView
+            android:id="@+id/fileName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/fileName"
             android:text="@string/no_pdf_yet"
             android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@+id/saveBtn"
@@ -167,7 +201,7 @@
             android:text="Save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/hourSpinner"
+            app:layout_constraintTop_toBottomOf="@+id/cardView4"
             app:layout_constraintVertical_bias="0.984" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

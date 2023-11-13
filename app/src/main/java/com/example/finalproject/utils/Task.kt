@@ -8,6 +8,7 @@ data class Task(var title : String ?= "",
                 var description : String ?= "",
                 var date : String ?= "2023-11-11",
                 var atHour : Int ?= -1,
+                var key: String ?= "",
                 var pdfName : String ?= "",
                 var pdfLink : String ?= ""): Parcelable {
     constructor(parcel: Parcel) : this(
@@ -15,6 +16,7 @@ data class Task(var title : String ?= "",
         parcel.readString(),
         parcel.readString(),
         parcel.readInt(),
+        parcel.readString(),
         parcel.readString(),
         parcel.readString()
     ) {
@@ -25,6 +27,7 @@ data class Task(var title : String ?= "",
         parcel.writeString(description)
         parcel.writeString(date)
         parcel.writeInt(atHour!!)
+        parcel.writeString(key)
         parcel.writeString(pdfName)
         parcel.writeString(pdfLink)
     }

@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.File
+import java.time.LocalDate
 
 
 class WeeklyTasksRvAdapter(
@@ -21,6 +22,13 @@ class WeeklyTasksRvAdapter(
 ) : RecyclerView.Adapter<WeeklyTasksRvAdapter.WeeklyTasksRvViewHolder>(){
     private lateinit var firebaseauth: FirebaseAuth
     private lateinit var storageReference: StorageReference
+
+
+    private var listener: OnTaskClickListener? = null
+
+    fun setOnTaskClickListener(listener: OnTaskClickListener) {
+        this.listener = listener
+    }
 
     var onItemClick : ((Task) -> Unit)? = null
     inner class WeeklyTasksRvViewHolder(val binding: EachTaskItemBinding) : RecyclerView.ViewHolder(binding.root)
@@ -38,10 +46,17 @@ class WeeklyTasksRvAdapter(
     override fun onBindViewHolder(holder: WeeklyTasksRvViewHolder, position: Int) {
         with(holder) {
             with(List[position]) {
-               binding.taskTitle.setText(this.title)
+                binding.taskTitle.setText(this.title)
                 if (!isAdmin){
                     binding.deleteTask.visibility = View.GONE
                     binding.editTask.visibility = View.GONE
+                }else{
+                    binding.deleteTask.setOnClickListener {
+                        listener?.onDelete(this.key!!)
+                    }
+                    binding.editTask.setOnClickListener {
+                        listener?.onEdit(this)
+                    }
                 }
 
                 binding.root.setOnClickListener {
@@ -49,10 +64,18 @@ class WeeklyTasksRvAdapter(
                 }
 
 
+
+
             }
         }
 
     }
+
+    interface OnTaskClickListener{
+        fun onDelete(key: String)
+        fun onEdit(task: Task)
+    }
+
 
 
 }

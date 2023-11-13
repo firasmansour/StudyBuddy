@@ -65,4 +65,8 @@ dependencies {
     implementation ("com.google.firebase:firebase-storage:20.2.1")
 
 
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation ("com.github.barteksc:android-pdf-viewer:2.8.2")
+
+
 }

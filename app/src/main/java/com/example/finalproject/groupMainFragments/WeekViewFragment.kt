@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.finalproject.GroupRoomActivity
 import com.example.finalproject.databinding.FragmentWeekViewBinding
 import com.example.finalproject.fragments.AddTaskPopUpFragment
 import com.example.finalproject.fragments.EditTextPopUpFragment
@@ -160,6 +161,8 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
     }
 
     override fun onShowPdf(pdfName: String, pdfLink: String) {
+        val pdfViewerFragment = PdfViewerFragment(pdfName,pdfLink)
+        (activity as? GroupRoomActivity)?.setCurrFragment(pdfViewerFragment)
 
     }
 

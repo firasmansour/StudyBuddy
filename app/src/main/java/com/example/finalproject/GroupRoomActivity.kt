@@ -75,7 +75,7 @@ class GroupRoomActivity : AppCompatActivity() {
         return true
     }
 
-    private fun setCurrFragment(fragment: Fragment){
+    fun setCurrFragment(fragment: Fragment){
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.flFragment,fragment)
             addToBackStack(null)

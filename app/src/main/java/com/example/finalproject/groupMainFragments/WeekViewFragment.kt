@@ -30,7 +30,7 @@ import java.time.LocalDate
 import kotlin.properties.Delegates
 
 
-class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpFragment.AddTaskDialogListener,WeeklyTasksRvAdapter.OnTaskClickListener{
+class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpFragment.AddTaskDialogListener,WeeklyTasksRvAdapter.OnTaskClickListener,ShowTaskPopUpFragment.ShowPdfDialogListener{
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var dataBaseRef: DatabaseReference
     private lateinit var storageReference: StorageReference
@@ -81,6 +81,7 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
 
 
 
+
     }
     private fun setWeekView() {
         binding.monthYearTV.setText(monthYearFromDate(AppUtils.selectedDate!!))
@@ -98,6 +99,11 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
         binding.TaskRv.layoutManager =  LinearLayoutManager(context)
         binding.TaskRv.adapter = taskRvAdapter
         taskRvAdapter.setOnTaskClickListener(this)
+        taskRvAdapter.onItemClick={
+            val popupDialog = ShowTaskPopUpFragment(it.title,it.description,it.date,it.pdfName,it.pdfLink)
+            popupDialog.setShowPdfDialogListener(this)
+            popupDialog.show(childFragmentManager, "ShowTaskPopUp")
+        }
     }
 
     override fun onItemClick(date: LocalDate) {
@@ -151,6 +157,10 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
         val popupDialog = AddTaskPopUpFragment(task.title,task.description,task.date,task.atHour.toString(),task.pdfName,task.pdfLink,task.key)
         popupDialog.setAddTaskDialogListener(this)
         popupDialog.show(childFragmentManager, "AddTaskPopUp")
+    }
+
+    override fun onShowPdf(pdfName: String, pdfLink: String) {
+
     }
 
 

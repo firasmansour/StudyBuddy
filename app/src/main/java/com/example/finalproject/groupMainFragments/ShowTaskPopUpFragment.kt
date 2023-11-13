@@ -2,6 +2,7 @@ package com.example.finalproject.groupMainFragments
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -46,15 +47,17 @@ class ShowTaskPopUpFragment(private val title: String?="",
         binding.Close.setOnClickListener {
             dismiss()
         }
-        binding.pdfFile.setOnClickListener {
-            if (pdfLink!=null){
+        if (pdfLink==null || pdfLink == ""){
+
+            binding.pdfFile.visibility = View.GONE
+        }else{
+            binding.pdfFile.setOnClickListener {
                 listener?.onShowPdf(pdfName.toString(),pdfLink)
                 dismiss()
-            }else{
-                Toast.makeText(context,"there is no attatched file to this task",Toast.LENGTH_SHORT).show()
             }
-
         }
+
+
     }
     interface ShowPdfDialogListener{
         fun onShowPdf( pdfName:String, pdfLink: String)

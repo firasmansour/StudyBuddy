@@ -41,7 +41,7 @@ class GroupRoomActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
         group = intent.getParcelableExtra<Group>("group")!!
         supportActionBar?.title = group.name
-        tasksFragment = GroupTasksFragment(group.uid)
+        tasksFragment = GroupTasksFragment(group.uid!!)
         bundle.putParcelable("group", group)
         weekViewFragment.arguments = bundle
         supportFragmentManager.beginTransaction().apply {

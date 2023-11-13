@@ -134,7 +134,7 @@ class AddGroupSearchListPopUpFragment : DialogFragment() ,JoinPrivateGroupPopUpF
 
     override fun onJoin(groupUid: String) {
 
-        AppUtils.fetchGroupFromFirebase(requireContext(), groupUid) {
+        AppUtils.fetchGroupFromFirebase(groupUid) {
             listener?.onAddGroup(it!!)
             dismiss()
         }

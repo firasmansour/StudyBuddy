@@ -1,6 +1,7 @@
 package com.example.finalproject.utils
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -35,7 +36,7 @@ object AppUtils {
         })
     }
 
-    fun fetchGroupFromFirebase(context: Context,groupUid: String, callback: (Group?) -> Unit) {
+    fun fetchGroupFromFirebase(groupUid: String, callback: (Group?) -> Unit) {
         val tmp =  FirebaseDatabase.getInstance().reference.child("Groups")
         try {
             tmp.child(groupUid).addListenerForSingleValueEvent(object : ValueEventListener {
@@ -51,12 +52,12 @@ object AppUtils {
 
                 override fun onCancelled(databaseError: DatabaseError) {
                     // Handle any errors that may occur during the fetch
-                    Toast.makeText(context,"group not found", Toast.LENGTH_SHORT).show()
+
                     callback(null)
                 }
             })
         }catch (e:Exception){
-            Toast.makeText(context,"group not found", Toast.LENGTH_SHORT).show()
+            Log.d("fetch group error",e.message.toString())
         }
 
     }

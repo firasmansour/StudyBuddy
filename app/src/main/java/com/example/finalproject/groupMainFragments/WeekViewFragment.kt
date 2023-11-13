@@ -114,7 +114,7 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
 
     override fun onAddTask(title: String, description: String, date: String, hour: Int, pdfName: String?, pdfUri: Uri?,pdfLink: String?,taskKey:String?) {
 
-        if (taskKey==null){
+        if (taskKey==null ){
             if (pdfUri!=null && pdfName!=null){
                 val tmpStorage = storageReference.child("$date/"+title+"_"+pdfName)
                 pdfUri.let { uri ->
@@ -139,12 +139,26 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
                 }
             }
         }else{
-            val task = Task(title, description, date, hour,taskKey,pdfName,pdfLink)
-            group.removeTask(taskKey)
-            group.addTask(taskKey,task)
-            dataBaseRef.child(group.uid!!).setValue(group)
-            setTaskAdpater()
-
+            val tmpStorage = storageReference.child("$date/"+title+"_"+pdfName)
+            if (pdfUri!=null){
+                pdfUri.let { uri ->
+                    tmpStorage.putFile(uri).addOnSuccessListener {
+                        tmpStorage.downloadUrl.addOnSuccessListener {downloadUri->
+                            val task = Task(title, description, date, hour,taskKey,pdfName,downloadUri.toString())
+                            group.removeTask(taskKey)
+                            group.addTask(taskKey,task)
+                            dataBaseRef.child(group.uid!!).setValue(group)
+                            setTaskAdpater()
+                        }
+                    }
+                }
+            }else{
+                val task = Task(title, description, date, hour,taskKey,pdfName,pdfLink)
+                group.removeTask(taskKey)
+                group.addTask(taskKey,task)
+                dataBaseRef.child(group.uid!!).setValue(group)
+                setTaskAdpater()
+            }
         }
     }
 

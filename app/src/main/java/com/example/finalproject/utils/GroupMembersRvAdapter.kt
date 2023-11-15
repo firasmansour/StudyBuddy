@@ -19,6 +19,7 @@ import java.io.File
 class GroupMembersRvAdapter(
 
     private val List: MutableList<User>,
+    private val AdminsList : MutableList<String>,
     private val isAdmin:Boolean
 
 ) : RecyclerView.Adapter<GroupMembersRvAdapter.UsersRvViewHolder>(){
@@ -58,6 +59,11 @@ class GroupMembersRvAdapter(
 
                 binding.root.setOnClickListener {
                     onItemClick?.invoke(this)
+                }
+                AppUtils.fetchUserUidByEmail(this.email.toString()){userUid->
+                    if (AdminsList.contains(userUid)){
+                        binding.isAdmin.visibility = View.VISIBLE
+                    }
                 }
 
 

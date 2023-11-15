@@ -13,7 +13,7 @@
         android:src="@drawable/male" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginStart="15dp"
@@ -32,5 +32,18 @@
             android:id="@+id/email_text"/>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/isAdmin"
+        android:layout_width="222dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="10dp"
+        android:text="Admin"
+        android:visibility="invisible"
+        android:gravity="center|start"
+        android:paddingLeft="15dp"
+        android:textColor="#5656F8"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
 </LinearLayout>

@@ -47,6 +47,8 @@ class WeeklyTasksRvAdapter(
         with(holder) {
             with(List[position]) {
                 binding.taskTitle.setText(this.title)
+                binding.hour.setText("${this.atHour}:00")
+                binding.date.text = AppUtils.formattedDate(LocalDate.parse(this.date))
                 if (!isAdmin){
                     binding.deleteTask.visibility = View.GONE
                     binding.editTask.visibility = View.GONE

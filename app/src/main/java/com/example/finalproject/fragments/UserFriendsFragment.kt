@@ -109,7 +109,7 @@ class UserFriendsFragment : Fragment() ,AddUserPopUpFragment.AddUserDialogListen
             Toast.makeText(context,"you cant add your self XD,GET SOME FRIENDS! ",Toast.LENGTH_SHORT).show()
             return
         }
-        fetchUserUidByEmail(requireContext(),friendEmail) {friendUid ->
+        fetchUserUidByEmail(friendEmail) { friendUid ->
             if (friendUid!=null){
                 val userUid = firebaseauth.currentUser?.uid.toString()
                 dataBaseRef.child(userUid).addListenerForSingleValueEvent(object :

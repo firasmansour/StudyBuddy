@@ -25,11 +25,12 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 
-class GroupTasksFragment(groupId : String?) : Fragment (),ShowTaskPopUpFragment.ShowPdfDialogListener{
+class GroupTasksFragment(groupId : String?) : Fragment (),ShowTaskPopUpFragment.ShowPdfDialogListener,AddTaskPopUpFragment.AddTaskDialogListener,WeeklyTasksRvAdapter.OnTaskClickListener{
 
     private lateinit var binding: FragmentGroupTasksBinding
     private lateinit var tasksRvAdapter : WeeklyTasksRvAdapter
@@ -37,7 +38,7 @@ class GroupTasksFragment(groupId : String?) : Fragment (),ShowTaskPopUpFragment.
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var dataBaseRef:DatabaseReference
     private lateinit var userUid:String
-    private  var group: Group?=null
+//    private  var group: Group?=null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -58,9 +59,10 @@ class GroupTasksFragment(groupId : String?) : Fragment (),ShowTaskPopUpFragment.
 
     private fun setTaskAdpater() {
         AppUtils.fetchGroupFromFirebase(groupuid!!){group ->
-            tasksRvAdapter = WeeklyTasksRvAdapter(group!!.tasksMap.values.toMutableList(),false)
+            tasksRvAdapter = WeeklyTasksRvAdapter(group!!.tasksMap.values.toMutableList(),group.admins.contains(userUid))
             binding.rvTasks.layoutManager =  LinearLayoutManager(context)
             binding.rvTasks.adapter = tasksRvAdapter
+            tasksRvAdapter.setOnTaskClickListener(this)
             tasksRvAdapter.onItemClick={
                 val popupDialog = ShowTaskPopUpFragment(it.title,it.description,it.date,it.pdfName,it.pdfLink)
                 popupDialog.setShowPdfDialogListener(this)
@@ -74,6 +76,45 @@ class GroupTasksFragment(groupId : String?) : Fragment (),ShowTaskPopUpFragment.
         (activity as? GroupRoomActivity)?.setCurrFragment(pdfViewerFragment)
     }
 
+    override fun onAddTask(title: String, description: String, date: String, hour: Int, pdfName: String?, pdfUri: Uri?,pdfLink: String?,taskKey:String?){
+     AppUtils.fetchGroupFromFirebase(groupuid!!){group ->
+         val storageReference = FirebaseStorage.getInstance().reference.child("Groups/" + groupuid+"/" + "Pdfs/")
+         val tmpStorage = storageReference.child("$date/"+title+"_"+pdfName)
+         if (pdfUri!=null){
+             pdfUri.let { uri ->
+                 tmpStorage.putFile(uri).addOnSuccessListener {
+                     tmpStorage.downloadUrl.addOnSuccessListener {downloadUri->
+                         val task = Task(title, description, date, hour,taskKey,pdfName,downloadUri.toString())
+                         group!!.removeTask(taskKey!!)
+                         group.addTask(taskKey,task)
+                         dataBaseRef.child(group.uid!!).setValue(group)
+                         setTaskAdpater()
+                     }
+                 }
+             }
+         }else{
+             val task = Task(title, description, date, hour,taskKey,pdfName,pdfLink)
+             group!!.removeTask(taskKey!!)
+             group.addTask(taskKey,task)
+             dataBaseRef.child(group.uid!!).setValue(group)
+             setTaskAdpater()
+         }
+     }
+    }
+
+    override fun onDelete(key: String) {
+        AppUtils.fetchGroupFromFirebase(groupuid!!){group ->
+            group!!.removeTask(key)
+            dataBaseRef.child(group.uid!!).setValue(group)
+            setTaskAdpater()
+        }
+    }
+
+    override fun onEdit(task: Task) {
+        val popupDialog = AddTaskPopUpFragment(task.title,task.description,task.date,task.atHour.toString(),task.pdfName,task.pdfLink,task.key)
+        popupDialog.setAddTaskDialogListener(this)
+        popupDialog.show(childFragmentManager, "AddTaskPopUp")
+    }
 
 
 }

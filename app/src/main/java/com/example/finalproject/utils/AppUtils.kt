@@ -62,7 +62,7 @@ object AppUtils {
 
     }
 
-    fun fetchUserUidByEmail(context: Context,email: String,callback: (String?) -> Unit)  {
+    fun fetchUserUidByEmail(email: String,callback: (String?) -> Unit)  {
         val tmp =  FirebaseDatabase.getInstance().reference.child("Users")
         tmp.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -74,13 +74,11 @@ object AppUtils {
                         return
                     }
                 } else {
-                    Toast.makeText(context,"There is no such User",Toast.LENGTH_SHORT).show()
                     callback(null)
                 }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Toast.makeText(context,databaseError.message,Toast.LENGTH_SHORT).show()
                 callback(null)
             }
         })
@@ -94,6 +92,10 @@ object AppUtils {
 
     fun monthYearFromDate(date: LocalDate): String? {
         val formatter = DateTimeFormatter.ofPattern("MMMM yyyy")
+        return date.format(formatter)
+    }
+    fun formattedDate(date: LocalDate): String? {
+        val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
         return date.format(formatter)
     }
     fun daysInWeekArray(selectedDate: LocalDate?): ArrayList<LocalDate>? {

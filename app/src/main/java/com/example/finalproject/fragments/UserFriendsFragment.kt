@@ -75,7 +75,7 @@ class UserFriendsFragment : Fragment() ,AddUserPopUpFragment.AddUserDialogListen
 
         dataBaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                fetchUserFromFirebase(requireContext(),firebaseauth.currentUser?.uid.toString()){
+                fetchUserFromFirebase(firebaseauth.currentUser?.uid.toString()){
                     usersList.clear()
                     for (userSnapshot in snapshot.children) {
                         if (it!!.friendsList.contains(userSnapshot.key)){

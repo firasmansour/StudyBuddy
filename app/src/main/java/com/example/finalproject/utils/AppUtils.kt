@@ -7,6 +7,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -15,7 +16,7 @@ import java.time.format.DateTimeParseException
 
 object AppUtils {
 
-    fun fetchUserFromFirebase(context: Context,uid: String, callback: (User?) -> Unit) {
+    fun fetchUserFromFirebase(uid: String, callback: (User?) -> Unit) {
         val tmp =  FirebaseDatabase.getInstance().reference.child("Users")
         tmp.child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -30,7 +31,6 @@ object AppUtils {
 
             override fun onCancelled(databaseError: DatabaseError) {
                 // Handle any errors that may occur during the fetch
-                Toast.makeText(context,"user not found", Toast.LENGTH_SHORT).show()
                 callback(null)
             }
         })
@@ -138,5 +138,46 @@ object AppUtils {
             }
         }
         return filteredTasks
+    }
+
+
+    fun deleteFolderRecursive(storage: FirebaseStorage, folderPath: String) {
+        val storageRef = storage.reference.child(folderPath)
+
+        // Delete all items (files and subfolders) within the folder
+        storageRef.listAll()
+            .addOnSuccessListener { result ->
+                result.items.forEach { itemRef ->
+                    itemRef.delete()
+                        .addOnSuccessListener {
+                            // Item deleted successfully
+                            Log.d("deleteRes",itemRef.name)
+                        }
+                        .addOnFailureListener { e ->
+                            // Handle the error
+                            Log.d("deleteRes",e.message.toString())
+                        }
+                }
+
+                // Recursively delete subfolders
+                result.prefixes.forEach { subfolderRef ->
+                    val subfolderPath = subfolderRef.toString()
+                    deleteFolderRecursive(storage, subfolderPath)
+                }
+
+                // After deleting all items, delete the folder itself
+                storageRef.delete()
+                    .addOnSuccessListener {
+                        Log.d("deleteRes","Success")
+                    }
+                    .addOnFailureListener { e ->
+                        // Handle the error
+                        Log.d("deleteRes",e.message.toString())
+                    }
+            }
+            .addOnFailureListener { e ->
+                // Handle the error
+                Log.d("deleteRes",e.message.toString())
+            }
     }
 }

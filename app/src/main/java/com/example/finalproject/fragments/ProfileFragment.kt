@@ -67,7 +67,7 @@ class ProfileFragment : Fragment(),EditTextPopUpFragment.EditInfoDialogListener{
         else if (uid.isNotEmpty()){
 
 
-            AppUtils.fetchUserFromFirebase(requireContext(),uid) { user ->
+            AppUtils.fetchUserFromFirebase(uid) { user ->
                 if (user != null) {
                     binding.unfriendBtn.visibility = View.GONE
                     binding.name.setText(user.name)
@@ -95,7 +95,7 @@ class ProfileFragment : Fragment(),EditTextPopUpFragment.EditInfoDialogListener{
     }
 
         binding.unfriendBtn.setOnClickListener {
-            AppUtils.fetchUserFromFirebase(requireContext(),uid){user ->
+            AppUtils.fetchUserFromFirebase(uid){user ->
                 AppUtils.fetchUserUidByEmail(requireContext(),friend!!.email.toString()){frienduid ->
                     if (frienduid != null){
                         user!!.removeFriend(frienduid)
@@ -156,7 +156,7 @@ class ProfileFragment : Fragment(),EditTextPopUpFragment.EditInfoDialogListener{
     }
 
     override fun onEdited(newName: String, newStudy: String, newBio: String) {
-        AppUtils.fetchUserFromFirebase(requireContext(),uid) { user ->
+        AppUtils.fetchUserFromFirebase(uid) { user ->
             if (user != null) {
                 if (newName.isNotEmpty()){
                     user.name = newName

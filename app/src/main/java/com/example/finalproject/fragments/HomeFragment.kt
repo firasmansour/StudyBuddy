@@ -94,7 +94,7 @@ class HomeFragment : Fragment() ,AddGroupSearchListPopUpFragment.AddGroupDialogL
 
         dataBaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                AppUtils.fetchUserFromFirebase(requireContext(),firebaseauth.currentUser?.uid.toString()){
+                AppUtils.fetchUserFromFirebase(firebaseauth.currentUser?.uid.toString()){
                     groupsList.clear()
                     for (groupSnapshot in snapshot.children) {
                         if (it!!.groupsList.contains(groupSnapshot.key)){
@@ -128,7 +128,7 @@ class HomeFragment : Fragment() ,AddGroupSearchListPopUpFragment.AddGroupDialogL
         val groupUid = group.uid.toString()
         val tmp = FirebaseDatabase.getInstance().reference.child("Users")
         val userUid = firebaseauth.currentUser?.uid.toString()
-        AppUtils.fetchUserFromFirebase(requireContext(),userUid){
+        AppUtils.fetchUserFromFirebase(userUid){
 
             if (!it!!.groupsList.contains(groupUid)){
                 it.groupsList.add(groupUid)
@@ -162,7 +162,7 @@ class HomeFragment : Fragment() ,AddGroupSearchListPopUpFragment.AddGroupDialogL
         dataBaseRef.child(key.toString()).setValue(group).addOnCompleteListener {
             if (it.isSuccessful){
                 //add group to user group list
-                AppUtils.fetchUserFromFirebase(requireContext(),userUid){
+                AppUtils.fetchUserFromFirebase(userUid){
 
                     it!!.groupsList.add(key.toString())
                     tmp.child(userUid).setValue(it)

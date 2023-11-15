@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/miMakeAdmin"
+        android:title="Make Admin" />
+    <item
+        android:id="@+id/miKick"
+        android:title="Kick Member" />
+    <!-- Add more items as needed -->
+</menu>

@@ -3,6 +3,7 @@ package com.example.finalproject.fragments
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +17,6 @@ import com.example.finalproject.databinding.FragmentJoinPrivateGroupPopUpBinding
 
 class JoinPrivateGroupPopUpFragment : DialogFragment() {
     private lateinit var binding: FragmentJoinPrivateGroupPopUpBinding
-    private lateinit var groupCode: String
 
     private var listener: JoinPrivateGroupDialogListener? = null
 
@@ -36,15 +36,18 @@ class JoinPrivateGroupPopUpFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        groupCode = binding.groupCodeEt.toString()
 
         binding.CloseBtn.setOnClickListener {
             dismiss()
         }
         binding.joinBtn.setOnClickListener {
-            if (groupCode!=null){
+            val groupCode = binding.groupCodeEt.text.toString()
+            Log.d("OnJoinPressed",groupCode)
+            if (groupCode != ""){
                 listener?.onJoin(groupCode)
+                dismiss()
             }
+
 
         }
 

@@ -1,6 +1,7 @@
 package com.example.finalproject.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -134,10 +135,33 @@ class AddGroupSearchListPopUpFragment : DialogFragment() ,JoinPrivateGroupPopUpF
 
     override fun onJoin(groupUid: String) {
 
-        AppUtils.fetchGroupFromFirebase(groupUid) {
-            listener?.onAddGroup(it!!)
-            dismiss()
+//        val tmp =  FirebaseDatabase.getInstance().reference.child("Groups")
+//        try {
+//            tmp.child(groupUid).addListenerForSingleValueEvent(object : ValueEventListener {
+//                override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                    // Check if the user exists
+//                    if (dataSnapshot.exists()) {
+//                        val group = dataSnapshot.getValue(Group::class.java)
+//                        listener?.onAddGroup(group!!)
+//                        dismiss()
+//                    }
+//                }
+//
+//                override fun onCancelled(databaseError: DatabaseError) {
+//                }
+//            })
+//        }catch (e:Exception){
+//            Log.d("JoinGroup",e.message.toString())
+//            Log.d("JoinGroupUid",groupUid)
+//        }
+        AppUtils.fetchGroupFromFirebase(groupUid){group->
+            if (group!=null){
+                listener?.onAddGroup(group!!)
+                dismiss()
+            }
+
         }
+
 
     }
 

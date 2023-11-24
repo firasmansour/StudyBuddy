@@ -20,6 +20,7 @@ class GroupMembersRvAdapter(
 
     private val List: MutableList<User>,
     private val AdminsList : MutableList<String>,
+    private val owner : String ?= "",
     private val isAdmin:Boolean
 
 ) : RecyclerView.Adapter<GroupMembersRvAdapter.UsersRvViewHolder>(){
@@ -62,6 +63,9 @@ class GroupMembersRvAdapter(
                 }
                 AppUtils.fetchUserUidByEmail(this.email.toString()){userUid->
                     if (AdminsList.contains(userUid)){
+                        if ( owner == userUid){
+                            binding.isAdmin.text = "Owner"
+                        }
                         binding.isAdmin.visibility = View.VISIBLE
                     }
                 }
@@ -93,6 +97,12 @@ class GroupMembersRvAdapter(
                     Log.d("makeAdmin",user.email.toString())
                     true
                 }
+                R.id.miRemoveAdmin -> {
+                    // Handle miRemoveAdmin click for the specific data item
+                    listener?.OnRemoveAdmin(user)
+                    Log.d("RemoveAdmin",user.email.toString())
+                    true
+                }
                 R.id.miKick -> {
                     // Handle miKick click for the specific data item
                     listener?.OnKickMember(user)
@@ -115,5 +125,6 @@ class GroupMembersRvAdapter(
     interface OnMemberLongClickListener{
         fun OnMakeAdmin(member:User)
         fun OnKickMember(member:User)
+        fun OnRemoveAdmin(member:User)
     }
 }

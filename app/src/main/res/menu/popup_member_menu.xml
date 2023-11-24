@@ -4,7 +4,9 @@
         android:id="@+id/miMakeAdmin"
         android:title="Make Admin" />
     <item
+        android:id="@+id/miRemoveAdmin"
+        android:title="Remove Admin" />
+    <item
         android:id="@+id/miKick"
         android:title="Kick Member" />
-    <!-- Add more items as needed -->
 </menu>

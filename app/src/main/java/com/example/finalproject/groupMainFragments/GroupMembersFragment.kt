@@ -49,7 +49,7 @@ class GroupMembersFragment : Fragment(),GroupMembersRvAdapter.OnMemberLongClickL
     private fun setMembersAdpater() {
         membersList.clear()
         binding.rvMembers.layoutManager = LinearLayoutManager(context)
-        membersRvAdapter = GroupMembersRvAdapter(membersList,group.admins,group.admins.contains(userUid))
+        membersRvAdapter = GroupMembersRvAdapter(membersList,group.admins,group.owner,group.admins.contains(userUid))
         membersRvAdapter.setOnMemberLongClickListener(this)
         binding.rvMembers.adapter = membersRvAdapter
 
@@ -66,7 +66,11 @@ class GroupMembersFragment : Fragment(),GroupMembersRvAdapter.OnMemberLongClickL
 
                         if (member != null) {
                             if (group.admins.contains(memberSnapshot.key)){
-                                membersList.add(0,member)
+                                if (group.owner == memberSnapshot.key){
+                                    membersList.add(0,member)
+                                }else{
+                                    membersList.add(1,member)
+                                }
                             }else{
                                 membersList.add(member)
                             }
@@ -89,29 +93,58 @@ class GroupMembersFragment : Fragment(),GroupMembersRvAdapter.OnMemberLongClickL
     override fun OnMakeAdmin(member: User) {
         val dataBaseGroupRef = FirebaseDatabase.getInstance().reference.child("Groups")
         AppUtils.fetchUserUidByEmail(member.email.toString()){ memberUid->
-            group.addAdmin(memberUid.toString())
-            dataBaseGroupRef.child(group.uid!!).setValue(group)
+            if (!group.admins.contains(memberUid)){
+                group.addAdmin(memberUid.toString())
+                dataBaseGroupRef.child(group.uid!!).setValue(group)
+                setMembersAdpater()
+            }
         }
-        setMembersAdpater()
+
     }
 
     override fun OnKickMember(member: User) {
         if (member.email.toString() != firebaseAuth.currentUser?.email){
             val dataBaseGroupRef = FirebaseDatabase.getInstance().reference.child("Groups")
             AppUtils.fetchUserUidByEmail(member.email.toString()){ memberUid->
-                group.removeMember(memberUid.toString())
-                if (group.admins.contains(memberUid)){
-                    group.removeAdmin(memberUid.toString())
+                if (group.owner != memberUid){
+                    group.removeMember(memberUid.toString())
+                    if (group.admins.contains(memberUid)){
+                        group.removeAdmin(memberUid.toString())
+                    }
+                    dataBaseGroupRef.child(group.uid!!).setValue(group)
+                    member.groupsList.remove(group.uid)
+                    dataBaseUsersRef.child(memberUid.toString()).setValue(member)
+                    setMembersAdpater()
+
+                }else{
+                    Toast.makeText(context,"you cant kick the Owner of the Group ... ",Toast.LENGTH_SHORT).show()
                 }
-                dataBaseGroupRef.child(group.uid!!).setValue(group)
-                member.groupsList.remove(group.uid)
-                dataBaseUsersRef.child(memberUid.toString()).setValue(member)
+
             }
-            setMembersAdpater()
+
         }else{
             Toast.makeText(context,"you cant kick yourself :p",Toast.LENGTH_SHORT).show()
         }
 
+    }
+
+    override fun OnRemoveAdmin(member: User) {
+        if (member.email.toString() != firebaseAuth.currentUser?.email){
+
+        val dataBaseGroupRef = FirebaseDatabase.getInstance().reference.child("Groups")
+        AppUtils.fetchUserUidByEmail(member.email.toString()) { memberUid ->
+            if (group.owner != memberUid){
+                group.removeAdmin(memberUid.toString())
+                dataBaseGroupRef.child(group.uid!!).setValue(group)
+                setMembersAdpater()
+            }else{
+                Toast.makeText(context,"you cant remove the Owner :p",Toast.LENGTH_SHORT).show()
+            }
+
+        }
+        }else{
+            Toast.makeText(context,"you cant remove yourself from the admin role :p",Toast.LENGTH_SHORT).show()
+        }
     }
 
 

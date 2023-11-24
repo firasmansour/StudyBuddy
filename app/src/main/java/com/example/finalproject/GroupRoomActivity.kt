@@ -2,6 +2,7 @@ package com.example.finalproject
 
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils.replace
@@ -76,6 +77,19 @@ class GroupRoomActivity : AppCompatActivity() {
                 val editor = sharedPreferences.edit()
                 editor.putString("groupCode", groupCode)
                 editor.apply()
+                ////////Share via another app/////
+                val shareIntent = Intent(Intent.ACTION_SEND)
+                shareIntent.type = "text/plain"
+                shareIntent.putExtra(Intent.EXTRA_TEXT, groupCode)
+
+                val chooser = Intent.createChooser(shareIntent, "Share via")
+
+                if (shareIntent.resolveActivity(packageManager) != null) {
+                    startActivity(chooser)
+                } else {
+                    // Handle the case where no apps can handle the share intent
+                    Toast.makeText(this, "No app found to share", Toast.LENGTH_SHORT).show()
+                }
             }
             R.id.miTasks ->setCurrFragment(tasksFragment)
             R.id.miMembers->setCurrFragment(groupMembersFragment)
@@ -100,7 +114,7 @@ class GroupRoomActivity : AppCompatActivity() {
                                         if (updatedGroup.admins.contains(userUid)){
                                             updatedGroup.removeAdmin(userUid)
                                         }
-                                        if (updatedGroup.members.isEmpty()){
+                                        if (updatedGroup.members.isEmpty() || updatedGroup.owner == userUid){
                                             dataBaseGroupRef.child(group.uid!!).removeValue()
                                             AppUtils.deleteFolderRecursive(FirebaseStorage.getInstance(),"Groups/"+group.uid)
                                             finish()

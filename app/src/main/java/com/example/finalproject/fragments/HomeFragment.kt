@@ -158,6 +158,7 @@ class HomeFragment : Fragment() ,AddGroupSearchListPopUpFragment.AddGroupDialogL
         val group = Group(groupName,isPublic,key,description)
         val tmp = FirebaseDatabase.getInstance().reference.child("Users")
         group.addAdmin(firebaseauth.currentUser?.uid.toString())
+        group.owner = firebaseauth.currentUser?.uid.toString()
         group.addMember(firebaseauth.currentUser?.uid.toString())
         dataBaseRef.child(key.toString()).setValue(group).addOnCompleteListener {
             if (it.isSuccessful){

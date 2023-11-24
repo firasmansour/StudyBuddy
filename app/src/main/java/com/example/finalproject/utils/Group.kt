@@ -10,7 +10,8 @@ data class Group(
     var description: String ?= "",
     var members: MutableList<String> = mutableListOf(),
     var tasksMap: HashMap<String,Task> = hashMapOf(),
-    var admins: MutableList<String> = mutableListOf()) : Parcelable {
+    var admins: MutableList<String> = mutableListOf(),
+    var owner :String ?= "" ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readInt(),
@@ -22,7 +23,8 @@ data class Group(
         parcel.readHashMap(Task::class.java.classLoader) as HashMap<String, Task>,
         mutableListOf<String>().apply {
             parcel.readStringList(this)
-        }
+        },
+        parcel.readString()
     ) {
     }
 
@@ -34,6 +36,7 @@ data class Group(
         parcel.writeStringList(members)
         parcel.writeMap(tasksMap)
         parcel.writeStringList(admins)
+        parcel.writeString(owner)
     }
 
     override fun describeContents(): Int {

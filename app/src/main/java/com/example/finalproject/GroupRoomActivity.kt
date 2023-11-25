@@ -54,6 +54,7 @@ class GroupRoomActivity : AppCompatActivity() {
         supportActionBar?.title = group.name
         tasksFragment = GroupTasksFragment(group.uid!!)
         bundle.putParcelable("group", group)
+        groupProfileFragment.arguments = bundle
         weekViewFragment.arguments = bundle
         groupMembersFragment.arguments = bundle
         supportFragmentManager.beginTransaction().apply {

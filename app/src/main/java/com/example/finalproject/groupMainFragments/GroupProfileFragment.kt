@@ -38,6 +38,7 @@ class GroupProfileFragment : Fragment() {
         AppUtils.fetchUserFromFirebase(group.owner!!){user->
             if (user != null){
                 binding.ownerNameTv.text = user.name
+                binding.tvOwnerEmail.text = user.email
             }
         }
         getGroupPic(group.uid.toString())

@@ -2,7 +2,6 @@ package com.example.finalproject.utils
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -10,6 +9,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
@@ -98,6 +98,14 @@ object AppUtils {
         val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
         return date.format(formatter)
     }
+    fun monthDayFromDate(date: LocalDate): String? {
+        val formatter = DateTimeFormatter.ofPattern("MMMM d")
+        return date.format(formatter)
+    }
+    fun formattedShortTime(time: LocalTime): String? {
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        return time.format(formatter)
+    }
     fun daysInWeekArray(selectedDate: LocalDate?): ArrayList<LocalDate>? {
         val days = ArrayList<LocalDate>()
         var current: LocalDate = sundayForDate(selectedDate!!)!!
@@ -139,6 +147,23 @@ object AppUtils {
                 filteredTasks.add(item.value)
             }
         }
+        filteredTasks.sortBy { it.atHour }//change to time
+        return filteredTasks
+    }
+    fun dailyViewTasks(items:HashMap<String,Task>,selectedDate: LocalDate?): ArrayList<Task> {
+        val filteredTasks = ArrayList<Task>()
+        for (item in items){
+            val date = LocalDate.parse(item.value.date)
+            if (date == selectedDate){
+                filteredTasks.add(item.value)
+            }
+        }
+        for (hour in 6..22){
+            if (filteredTasks.find { it.atHour == hour } == null){
+                filteredTasks.add(Task("","","",hour))
+            }
+        }
+        filteredTasks.sortBy { it.atHour }//change to time
         return filteredTasks
     }
 

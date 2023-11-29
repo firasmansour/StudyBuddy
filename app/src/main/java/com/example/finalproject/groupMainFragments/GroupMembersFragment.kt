@@ -69,7 +69,11 @@ class GroupMembersFragment : Fragment(),GroupMembersRvAdapter.OnMemberLongClickL
                                 if (group.owner == memberSnapshot.key){
                                     membersList.add(0,member)
                                 }else{
-                                    membersList.add(1,member)
+                                    if (membersList.size == 0){
+                                        membersList.add(0,member)
+                                    }else{
+                                        membersList.add(1,member)
+                                    }
                                 }
                             }else{
                                 membersList.add(member)

@@ -6,6 +6,7 @@
     <color name="gray">#888</color>
     <color name="blue">#0000FF</color>
     <color name="primary_color">#517593</color>
+    <color name="lightGray">#EEE</color>
 
 
     <color name="address">#2F7092</color>
@@ -18,5 +19,6 @@
     <color name="followersBg">#65DCE5</color>
     <color name="followingBg">#49BEFF</color>
     <color name="grey">#E5E5E5</color>
+
 
 </resources>

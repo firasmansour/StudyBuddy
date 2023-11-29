@@ -39,7 +39,9 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
     private lateinit var daysRvAdapter :DaysRvAdapter
     private lateinit var taskRvAdapter :WeeklyTasksRvAdapter
     private lateinit var group:Group
+    private  var dailyViewFragment =  DailyViewFragment()
     private var isUserAdmin  = false
+    val bundle = Bundle()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,9 +50,11 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
         firebaseAuth = FirebaseAuth.getInstance()
         AppUtils.selectedDate = LocalDate.now()
         group = arguments?.getParcelable<Group>("group")!!
+        bundle.putParcelable("group", group)
         isUserAdmin = group.admins.contains(firebaseAuth.currentUser!!.uid)
         storageReference = FirebaseStorage.getInstance().reference.child("Groups/" + group.uid+"/" + "Pdfs/")
         dataBaseRef = FirebaseDatabase.getInstance().reference.child("Groups")
+        dailyViewFragment.arguments = bundle
         return binding.root
     }
 
@@ -78,6 +82,10 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
             }else{
                 Toast.makeText(context,"only the admins can add tasks!",Toast.LENGTH_SHORT).show()
             }
+        }
+
+        binding.dailyBtn.setOnClickListener {
+            (activity as? GroupRoomActivity)?.setCurrFragment(dailyViewFragment)
         }
 
 

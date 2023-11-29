@@ -56,6 +56,7 @@ class AddTaskPopUpFragment(private val origTitle: String?="",
         }
         if (origHour!=""){
             binding.tvTime.text = origHour.toString() + ":" + min.toString()
+            hour = origHour!!.toInt()
         }
 
         binding.pdfFile.setOnClickListener {

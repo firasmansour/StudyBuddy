@@ -12,6 +12,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.File
 import java.time.LocalDate
+import java.time.LocalTime
 
 
 class WeeklyTasksRvAdapter(
@@ -46,8 +47,9 @@ class WeeklyTasksRvAdapter(
     override fun onBindViewHolder(holder: WeeklyTasksRvViewHolder, position: Int) {
         with(holder) {
             with(List[position]) {
+                val tmpTime = LocalTime.parse(this.time)
                 binding.taskTitle.setText(this.title)
-                binding.hour.setText("${this.atHour}:00")
+                binding.time.setText(AppUtils.formattedShortTime(tmpTime))
                 binding.date.text = AppUtils.formattedDate(LocalDate.parse(this.date))
                 if (!isAdmin){
                     binding.deleteTask.visibility = View.GONE

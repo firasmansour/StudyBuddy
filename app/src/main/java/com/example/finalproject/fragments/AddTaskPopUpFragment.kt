@@ -13,13 +13,14 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.DialogFragment
 import com.example.finalproject.databinding.FragmentAddTaskPopUpBinding
 import com.example.finalproject.utils.AppUtils
+import java.time.LocalTime
 import java.util.Calendar
 
 
 class AddTaskPopUpFragment(private val origTitle: String?="",
                            private val origDescription: String?="",
                            private val origDate: String?="",
-                           private val origHour: String?="",
+                           private val origTime: String?="",
                            private val origpdfName:String?="No Pdf Yet",
                            private val pdfLink:String?=null,
                            private val taskKey:String?=null) : DialogFragment() {
@@ -54,17 +55,20 @@ class AddTaskPopUpFragment(private val origTitle: String?="",
         binding.Close.setOnClickListener{
             dismiss()
         }
-        if (origHour!=""){
-            binding.tvTime.text = origHour.toString() + ":" + min.toString()
-            hour = origHour!!.toInt()
+        if (origTime!=""){
+            val tmpTime = LocalTime.parse(origTime)
+            binding.tvTime.text = tmpTime.hour.toString() + ":" + tmpTime.minute.toString()
+            hour = tmpTime.hour
+            min = tmpTime.minute
         }
 
         binding.pdfFile.setOnClickListener {
             launcher.launch("application/pdf")
         }
         binding.timePicker.setOnClickListener {
-            if (origHour!= ""){
-                openTimePicker(origHour!!.toInt(),0)
+            if (origTime!= ""){
+                val tmpTime = LocalTime.parse(origTime)
+                openTimePicker(tmpTime.hour,tmpTime.minute)
             }else{
                 openTimePicker(Calendar.getInstance().get(Calendar.HOUR),Calendar.getInstance().get(Calendar.MINUTE))
             }
@@ -78,7 +82,8 @@ class AddTaskPopUpFragment(private val origTitle: String?="",
 
             if (AppUtils.isDateValid(requireContext(),date)){
                 if (hour in 6..22){
-                    listener?.onAddTask(title,description,date,hour, pdfname, pdfFileUri,pdfLink,taskKey)
+                    val tmpTime = LocalTime.of(hour,min).toString()
+                    listener?.onAddTask(title,description,date,tmpTime, pdfname, pdfFileUri,pdfLink,taskKey)
                     dismiss()
                 }else{
                     Toast.makeText(context,"enter a valid hour",Toast.LENGTH_SHORT).show()
@@ -133,6 +138,6 @@ class AddTaskPopUpFragment(private val origTitle: String?="",
 //    }
 
     interface AddTaskDialogListener {
-        fun onAddTask(title: String,description: String,date: String,hour:Int,pdfName:String?=null,pdfUri:Uri?=null,pdfLink: String?=null,taskKey:String?=null)
+        fun onAddTask(title: String,description: String,date: String,time:String,pdfName:String?=null,pdfUri:Uri?=null,pdfLink: String?=null,taskKey:String?=null)
     }
 }

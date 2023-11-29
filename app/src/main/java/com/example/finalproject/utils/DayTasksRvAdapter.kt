@@ -33,7 +33,7 @@ class DayTasksRvAdapter(
     override fun onBindViewHolder(holder: DayTasksRvViewHolder, position: Int) {
         with(holder) {
             with(list[position]) {
-                binding.timeTV.text = AppUtils.formattedShortTime(LocalTime.of(this.atHour!!,0))
+                binding.timeTV.text = AppUtils.formattedShortTime(LocalTime.parse(this.time))
                 if (this.key!=""){
                     binding.taskTitleTv.text = this.title
                     binding.root.setOnClickListener{

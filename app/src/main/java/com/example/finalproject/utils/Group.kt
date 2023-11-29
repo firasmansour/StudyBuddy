@@ -11,6 +11,7 @@ data class Group(
     var members: MutableList<String> = mutableListOf(),
     var tasksMap: HashMap<String,Task> = hashMapOf(),
     var admins: MutableList<String> = mutableListOf(),
+    var createDate :String ?= "",
     var owner :String ?= "" ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
@@ -24,6 +25,7 @@ data class Group(
         mutableListOf<String>().apply {
             parcel.readStringList(this)
         },
+        parcel.readString(),
         parcel.readString()
     ) {
     }
@@ -36,6 +38,7 @@ data class Group(
         parcel.writeStringList(members)
         parcel.writeMap(tasksMap)
         parcel.writeStringList(admins)
+        parcel.writeString(createDate)
         parcel.writeString(owner)
     }
 

@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import java.time.LocalDate
 
 
 class HomeFragment : Fragment() ,AddGroupSearchListPopUpFragment.AddGroupDialogListener,CreateNewGroupPopUpFragment.CreateGroupDialogListener{
@@ -158,6 +159,7 @@ class HomeFragment : Fragment() ,AddGroupSearchListPopUpFragment.AddGroupDialogL
         val group = Group(groupName,isPublic,key,description)
         val tmp = FirebaseDatabase.getInstance().reference.child("Users")
         group.addAdmin(firebaseauth.currentUser?.uid.toString())
+        group.createDate = LocalDate.now().toString()
         group.owner = firebaseauth.currentUser?.uid.toString()
         group.addMember(firebaseauth.currentUser?.uid.toString())
         dataBaseRef.child(key.toString()).setValue(group).addOnCompleteListener {

@@ -51,6 +51,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="15dp"
             android:layout_marginTop="15dp"
+            android:visibility="gone"
             android:adjustViewBounds="true"
             android:scaleType="centerInside"
             android:src="@drawable/ic_settings" />

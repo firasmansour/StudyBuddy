@@ -76,7 +76,7 @@ class GroupTasksFragment(groupId : String?) : Fragment (),ShowTaskPopUpFragment.
         (activity as? GroupRoomActivity)?.setCurrFragment(pdfViewerFragment)
     }
 
-    override fun onAddTask(title: String, description: String, date: String, hour: Int, pdfName: String?, pdfUri: Uri?,pdfLink: String?,taskKey:String?){
+    override fun onAddTask(title: String, description: String, date: String, time: String, pdfName: String?, pdfUri: Uri?,pdfLink: String?,taskKey:String?){
      AppUtils.fetchGroupFromFirebase(groupuid!!){group ->
          val storageReference = FirebaseStorage.getInstance().reference.child("Groups/" + groupuid+"/" + "Pdfs/")
          val tmpStorage = storageReference.child("$date/"+title+"_"+pdfName)
@@ -84,7 +84,7 @@ class GroupTasksFragment(groupId : String?) : Fragment (),ShowTaskPopUpFragment.
              pdfUri.let { uri ->
                  tmpStorage.putFile(uri).addOnSuccessListener {
                      tmpStorage.downloadUrl.addOnSuccessListener {downloadUri->
-                         val task = Task(title, description, date, hour,taskKey,pdfName,downloadUri.toString())
+                         val task = Task(title, description, date, time,taskKey,pdfName,downloadUri.toString())
                          group!!.removeTask(taskKey!!)
                          group.addTask(taskKey,task)
                          dataBaseRef.child(group.uid!!).setValue(group)
@@ -93,7 +93,7 @@ class GroupTasksFragment(groupId : String?) : Fragment (),ShowTaskPopUpFragment.
                  }
              }
          }else{
-             val task = Task(title, description, date, hour,taskKey,pdfName,pdfLink)
+             val task = Task(title, description, date, time,taskKey,pdfName,pdfLink)
              group!!.removeTask(taskKey!!)
              group.addTask(taskKey,task)
              dataBaseRef.child(group.uid!!).setValue(group)
@@ -111,7 +111,7 @@ class GroupTasksFragment(groupId : String?) : Fragment (),ShowTaskPopUpFragment.
     }
 
     override fun onEdit(task: Task) {
-        val popupDialog = AddTaskPopUpFragment(task.title,task.description,task.date,task.atHour.toString(),task.pdfName,task.pdfLink,task.key)
+        val popupDialog = AddTaskPopUpFragment(task.title,task.description,task.date,task.time.toString(),task.pdfName,task.pdfLink,task.key)
         popupDialog.setAddTaskDialogListener(this)
         popupDialog.show(childFragmentManager, "AddTaskPopUp")
     }

@@ -120,7 +120,7 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
         setWeekView()
     }
 
-    override fun onAddTask(title: String, description: String, date: String, hour: Int, pdfName: String?, pdfUri: Uri?,pdfLink: String?,taskKey:String?) {
+    override fun onAddTask(title: String, description: String, date: String, time: String, pdfName: String?, pdfUri: Uri?,pdfLink: String?,taskKey:String?) {
 
         if (taskKey==null ){
             if (pdfUri!=null && pdfName!=null){
@@ -129,7 +129,7 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
                     tmpStorage.putFile(uri).addOnSuccessListener {
                         tmpStorage.downloadUrl.addOnSuccessListener {downloadUri->
                             dataBaseRef.child(group.uid!!).child("tasksMap").push().key?.let {key->//could make the file saved as the key not that above!!
-                                val task = Task(title,description,date,hour, key,pdfName,downloadUri.toString())
+                                val task = Task(title,description,date,time, key,pdfName,downloadUri.toString())
                                 group.addTask(key,task)
                                 dataBaseRef.child(group.uid!!).setValue(group)
                                 setTaskAdpater()
@@ -140,7 +140,7 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
             }
             else{
                 dataBaseRef.child(group.uid!!).child("tasksMap").push().key?.let { key ->
-                    val task = Task(title, description, date, hour,key)
+                    val task = Task(title, description, date, time,key)
                     group.addTask(key,task)
                     dataBaseRef.child(group.uid!!).setValue(group)
                     setTaskAdpater()
@@ -152,7 +152,7 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
                 pdfUri.let { uri ->
                     tmpStorage.putFile(uri).addOnSuccessListener {
                         tmpStorage.downloadUrl.addOnSuccessListener {downloadUri->
-                            val task = Task(title, description, date, hour,taskKey,pdfName,downloadUri.toString())
+                            val task = Task(title, description, date, time,taskKey,pdfName,downloadUri.toString())
                             group.removeTask(taskKey)
                             group.addTask(taskKey,task)
                             dataBaseRef.child(group.uid!!).setValue(group)
@@ -161,7 +161,7 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
                     }
                 }
             }else{
-                val task = Task(title, description, date, hour,taskKey,pdfName,pdfLink)
+                val task = Task(title, description, date, time,taskKey,pdfName,pdfLink)
                 group.removeTask(taskKey)
                 group.addTask(taskKey,task)
                 dataBaseRef.child(group.uid!!).setValue(group)
@@ -177,7 +177,7 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
     }
 
     override fun onEdit(task: Task) {
-        val popupDialog = AddTaskPopUpFragment(task.title,task.description,task.date,task.atHour.toString(),task.pdfName,task.pdfLink,task.key)
+        val popupDialog = AddTaskPopUpFragment(task.title,task.description,task.date,task.time,task.pdfName,task.pdfLink,task.key)
         popupDialog.setAddTaskDialogListener(this)
         popupDialog.show(childFragmentManager, "AddTaskPopUp")
     }

@@ -147,7 +147,7 @@ object AppUtils {
                 filteredTasks.add(item.value)
             }
         }
-        filteredTasks.sortBy { it.atHour }//change to time
+        filteredTasks.sortBy { LocalTime.parse(it.time) }//change to time
         return filteredTasks
     }
     fun dailyViewTasks(items:HashMap<String,Task>,selectedDate: LocalDate?): ArrayList<Task> {
@@ -159,11 +159,11 @@ object AppUtils {
             }
         }
         for (hour in 6..22){
-            if (filteredTasks.find { it.atHour == hour } == null){
-                filteredTasks.add(Task("","","",hour))
+            if (filteredTasks.find { LocalTime.parse(it.time).hour == hour && LocalTime.parse(it.time).minute == 0 } == null){
+                filteredTasks.add(Task("","","",LocalTime.of(hour,0).toString()))
             }
         }
-        filteredTasks.sortBy { it.atHour }//change to time
+        filteredTasks.sortBy { LocalTime.parse(it.time)  }//change to time
         return filteredTasks
     }
 

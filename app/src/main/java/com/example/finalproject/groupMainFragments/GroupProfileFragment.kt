@@ -12,6 +12,7 @@ import com.example.finalproject.databinding.FragmentGroupProfileBinding
 import com.example.finalproject.databinding.FragmentGroupTasksBinding
 import com.example.finalproject.utils.AppUtils
 import com.example.finalproject.utils.Group
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.File
@@ -19,12 +20,14 @@ import java.io.File
 class GroupProfileFragment : Fragment() {
     private lateinit var binding: FragmentGroupProfileBinding
     private lateinit var storageReference: StorageReference
+    private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var group: Group
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentGroupProfileBinding.inflate(inflater,container,false)
+        firebaseAuth = FirebaseAuth.getInstance()
         group = arguments?.getParcelable<Group>("group")!!
 
         return binding.root
@@ -41,7 +44,15 @@ class GroupProfileFragment : Fragment() {
                 binding.tvOwnerEmail.text = user.email
             }
         }
+        if (group.admins.contains(firebaseAuth.currentUser?.uid)){
+            binding.editProfileIcon.visibility = View.VISIBLE
+            binding.editProfileIcon.setOnClickListener {
+                //edit
+            }
+        }
         getGroupPic(group.uid.toString())
+
+
 
     }
 

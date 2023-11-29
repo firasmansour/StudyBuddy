@@ -7,7 +7,7 @@ import java.time.Year
 data class Task(var title : String ?= "",
                 var description : String ?= "",
                 var date : String ?= "2023-11-11",
-                var atHour : Int ?= -1,
+                var time : String ?= "",
                 var key: String ?= "",
                 var pdfName : String ?= "",
                 var pdfLink : String ?= ""): Parcelable {
@@ -15,7 +15,7 @@ data class Task(var title : String ?= "",
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readInt(),
+        parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString()
@@ -26,7 +26,7 @@ data class Task(var title : String ?= "",
         parcel.writeString(title)
         parcel.writeString(description)
         parcel.writeString(date)
-        parcel.writeInt(atHour!!)
+        parcel.writeString(time)
         parcel.writeString(key)
         parcel.writeString(pdfName)
         parcel.writeString(pdfLink)

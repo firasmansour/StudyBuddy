@@ -10,14 +10,17 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.finalproject.AppActivity
 import com.example.finalproject.GroupRoomActivity
 import com.example.finalproject.databinding.FragmentWeekViewBinding
 import com.example.finalproject.fragments.AddTaskPopUpFragment
 import com.example.finalproject.fragments.EditTextPopUpFragment
+import com.example.finalproject.fragments.HomeFragment
 import com.example.finalproject.utils.AppUtils
 import com.example.finalproject.utils.AppUtils.daysInWeekArray
 import com.example.finalproject.utils.AppUtils.monthYearFromDate
 import com.example.finalproject.utils.DaysRvAdapter
+import com.example.finalproject.utils.FcmNotificationsSender
 import com.example.finalproject.utils.Group
 import com.example.finalproject.utils.Task
 import com.example.finalproject.utils.User
@@ -132,7 +135,11 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
                                 val task = Task(title,description,date,time, key,pdfName,downloadUri.toString())
                                 group.addTask(key,task)
                                 dataBaseRef.child(group.uid!!).setValue(group)
-                                setTaskAdpater()
+                                /////////
+                                val tmp :FcmNotificationsSender = FcmNotificationsSender("/topics/${group.uid.toString()}",group.name.toString(),title,
+                                    requireContext(),requireActivity(),group.uid.toString())
+                                tmp.SendNotifications()
+                                /////////
                             }
                         }
                     }
@@ -143,6 +150,11 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
                     val task = Task(title, description, date, time,key)
                     group.addTask(key,task)
                     dataBaseRef.child(group.uid!!).setValue(group)
+                    /////////
+                    val tmp :FcmNotificationsSender = FcmNotificationsSender("/topics/${group.uid.toString()}",group.name.toString(),title,
+                        requireContext(),requireActivity(),group.uid.toString())
+                    tmp.SendNotifications()
+                    /////////
                     setTaskAdpater()
                 }
             }
@@ -156,6 +168,11 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
                             group.removeTask(taskKey)
                             group.addTask(taskKey,task)
                             dataBaseRef.child(group.uid!!).setValue(group)
+                            /////////
+                            val tmp :FcmNotificationsSender = FcmNotificationsSender("/topics/${group.uid.toString()}",group.name.toString(),title,
+                                requireContext(),requireActivity(),group.uid.toString())
+                            tmp.SendNotifications()
+                            /////////
                             setTaskAdpater()
                         }
                     }
@@ -165,6 +182,11 @@ class WeekViewFragment : Fragment() ,DaysRvAdapter.onItemsListener,AddTaskPopUpF
                 group.removeTask(taskKey)
                 group.addTask(taskKey,task)
                 dataBaseRef.child(group.uid!!).setValue(group)
+                /////////
+                val tmp :FcmNotificationsSender = FcmNotificationsSender("/topics/${group.uid.toString()}",group.name.toString(),title,
+                    requireContext(),requireActivity(),group.uid.toString())
+                tmp.SendNotifications()
+                /////////
                 setTaskAdpater()
             }
         }

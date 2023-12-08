@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.time.LocalDate
@@ -143,7 +144,7 @@ class HomeFragment : Fragment() ,AddGroupSearchListPopUpFragment.AddGroupDialogL
                     dataBaseRef.child(groupUid).setValue(group)
                 }
 
-
+                FirebaseMessaging.getInstance().subscribeToTopic(group.uid.toString())//maybe wrong
                 Toast.makeText(context,"group added successfully",Toast.LENGTH_SHORT).show()
             }else{
                 Toast.makeText(context,"you already in this group",Toast.LENGTH_SHORT).show()
@@ -171,7 +172,7 @@ class HomeFragment : Fragment() ,AddGroupSearchListPopUpFragment.AddGroupDialogL
                     tmp.child(userUid).setValue(it)
 
                 }
-
+                FirebaseMessaging.getInstance().subscribeToTopic(key.toString())
                 groupsList.add(group)
                 groupsRvAdapter.notifyItemInserted(groupsList.size-1)
                 Toast.makeText(context,"group added successfully!" , Toast.LENGTH_SHORT).show()

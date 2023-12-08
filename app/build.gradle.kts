@@ -50,6 +50,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx:22.1.1")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("com.google.firebase:firebase-storage-ktx:20.2.1")
+    implementation("com.google.firebase:firebase-messaging:23.3.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -67,6 +68,7 @@ dependencies {
 
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation ("com.github.barteksc:android-pdf-viewer:2.8.2")
+    implementation ("com.android.volley:volley:1.1.1")
 
 
 }

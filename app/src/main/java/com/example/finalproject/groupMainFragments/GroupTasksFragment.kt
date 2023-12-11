@@ -16,6 +16,7 @@ import com.example.finalproject.R
 import com.example.finalproject.databinding.FragmentGroupTasksBinding
 import com.example.finalproject.fragments.AddTaskPopUpFragment
 import com.example.finalproject.utils.AppUtils
+import com.example.finalproject.utils.FcmNotificationsSender
 import com.example.finalproject.utils.Group
 import com.example.finalproject.utils.Task
 import com.example.finalproject.utils.WeeklyTasksRvAdapter
@@ -88,6 +89,11 @@ class GroupTasksFragment(groupId : String?) : Fragment (),ShowTaskPopUpFragment.
                          group!!.removeTask(taskKey!!)
                          group.addTask(taskKey,task)
                          dataBaseRef.child(group.uid!!).setValue(group)
+                         /////////
+                         val tmp : FcmNotificationsSender = FcmNotificationsSender("/topics/${group.uid.toString()}",group.name.toString(),title,
+                             requireContext(),requireActivity(),group.uid.toString())
+                         tmp.SendNotifications()
+                         /////////
                          setTaskAdpater()
                      }
                  }
@@ -97,6 +103,11 @@ class GroupTasksFragment(groupId : String?) : Fragment (),ShowTaskPopUpFragment.
              group!!.removeTask(taskKey!!)
              group.addTask(taskKey,task)
              dataBaseRef.child(group.uid!!).setValue(group)
+             /////////
+             val tmp :FcmNotificationsSender = FcmNotificationsSender("/topics/${group.uid.toString()}",group.name.toString(),title,
+                 requireContext(),requireActivity(),group.uid.toString())
+             tmp.SendNotifications()
+             /////////
              setTaskAdpater()
          }
      }

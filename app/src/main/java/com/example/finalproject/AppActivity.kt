@@ -38,7 +38,7 @@ class AppActivity : AppCompatActivity() {
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clipData = ClipData.newPlainText("groupCode", groupCode)
         clipboardManager.setPrimaryClip(clipData)
-        val text = clipboardManager.primaryClip?.getItemAt(0)?.text.toString()
+//        val text = clipboardManager.primaryClip?.getItemAt(0)?.text.toString()
 //        Toast.makeText(this,text,Toast.LENGTH_SHORT).show()
 
     }
